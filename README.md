@@ -3,7 +3,18 @@
 > ember-cli v3.16.0  
 > node 10.16.0
 
+## 0. 前言
+1. 它是声明式的，不是命令式的d3的第一个核心是：数据驱动的dom元素创建，把这个思想上的弯绕过来，掌握1/3了
+2. 它是数据处理包，不是图形绘制包d3的第二个核心是：它的大量的api，提供的是对数据的转换与处理，无论是scale、layout还是svg.line等，都仅仅是对数据的处理，和绘制图形与DOM操作没有半毛关系。把这个思想上的弯绕过来，又掌握1/3了
+3. 它的api通常返回的是一个函数，这个函数的具体功能，通过函数对象的方法约定。d3的javascript写法不是那么符合常人的逻辑，比如：调用d3.svg.line()，这个我们获得的是一个line函数，作用是把原始数据转化成svg的path元素的d属性需要的字符串，如果连起来写的话是这样：var nd=d3.svg.line()(data); 这样获得的nd才是可以塞给path的d属性的东西。把这个思想上的弯绕过来，又掌握1/3
 
+以上三点转过来以后，基本算理解d3背后的思路了，大约看文档也可以独立写点东西出来了。d3的使用模式如下：
+
+	- step1：准备数据
+	- step2：创建dom
+	- step3：设置属性
+
+作者：ciga2011 ， [来源](https://www.zhihu.com/question/22171866/answer/22512521)
 ## 1. 前期工作
 ### 1.1 修改项目为 Pods 目录（可选）
 ``` javascript
@@ -13,7 +24,7 @@ let ENV = {
     podModulePrefix: 'ember-d3-demo/modules',
     // ...
   };
-``` 
+```
 ``` javascript
 // .ember-cli
 {
@@ -30,7 +41,7 @@ ember install ember-cli-typescript@latest && yarn add typescript@3.7.5
 安装 d3， 由于上面是使用了 typescript，所以安装命令变为：
 ```azurepowershell
 ember install ember-d3 && npm i --save @types/d3
-```  
+```
 如果没有安装 typescript 那就按照官方教程正常安装即可：
 ```azurepowershell
 ember install ember-d3 && yarn add --save-dev d3@5.15.0
@@ -106,7 +117,7 @@ export default class D3HelloWorld extends Component<D3HelloWorldArgs> {
 
 <p class="d3-bind2" {{did-insert this.dataBind2}}></p>
 <p class="d3-bind2" {{did-insert this.dataBind2}}></p>
-```  
+```
 ``` typescript
 // d3/bind-data.ts
 import Component from '@glimmer/component';
@@ -144,7 +155,127 @@ export default class D3BindData extends Component<D3BindDataArgs> {
 <div class="dropdown-divider"></div>
 <h2>d3-2 bind-data</h2>
 <D3::BindData />
-```  
+```
 运行程序可以看到：
-![data-bind](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-02-28-截屏2020-02-2819.50.20-PYPSAC.png)
+![data-bind](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-02-28-截屏2020-02-2819.50.20-PYPSAC.png). 
+
+## 3. 做一个简单的图表
+
+先从最简单的 柱状图 开始：
+
+涉及到 HTML 5 中的 [svg](https://developer.mozilla.org/zh-CN/docs/Web/SVG)
+
+### 3.1 添加画布
+
+在上一章节中，只是简单的使用 D3 添加文本元素，而添加 svg 的代码是：
+
+``` handlebars
+{{!-- d3/basic-histogram.hbs --}}
+<h3>3.1 append svg to element</h3>
+<div class="basic-svg-container" {{did-insert this.appendSvg}}></div>
+```
+
+``` typescript
+// d3/basic-histogram.ts
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { select } from 'd3-selection';
+
+interface D3BasicHistogramArgs {}
+
+export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
+    @action
+    appendSvg() {
+        let container = select(".basic-svg-container");
+        container.append('svg')
+        .attr("width",200)
+        .attr("height",123.6)
+        .style("background-color","orange")
+    }
+}
+```
+
+简单的向 div 元素中添加一个背景颜色为 orange 的 svg：
+
+![2020-03-02-截屏2020-03-0210.40.40-T9mNTf](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-02-截屏2020-03-0210.40.40-T9mNTf.png) 
+
+有了画布，就可以在画布上进行作图了：
+
+### 3.2 绘制简单柱状图
+
+柱状图就是由一个个的 rect 元素组成：
+
+``` handlebars
+{{!-- d3/basic-histogram.hbs --}}
+<h3>3.1 append svg to element</h3>
+<div class="basic-svg-container" {{did-insert this.appendSvg}}></div>
+<h3>3.2 basic-histogram</h3>
+<svg class="bar-container" {{did-insert this.initHistogram}}>
+</svg>
+```
+
+``` typescript
+// d3/basic-histogram.ts
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { select } from 'd3-selection';
+
+interface D3BasicHistogramArgs { }
+
+const DATASET = [250, 210, 170, 130, 90];  //数据（表示矩形的宽度）;
+const RECTHEIGHT = 25;   //每个矩形所占的像素高度(包括空白)
+export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
+    @action
+    appendSvg() {
+        let container = select(".basic-svg-container");
+        container.append('svg')
+            .attr("width", 300)
+            .attr("height", 185.4)
+            .style("background-color", "orange")
+    }
+
+    @action
+    initHistogram() {
+        const barContainer = select(".bar-container");
+
+        barContainer
+            .attr("width",300)
+            .attr("heigt",185.4)
+            .selectAll("rect")
+            .data(DATASET)
+            .enter()
+            .append("rect")
+            .attr("x", 20)
+            .attr("y", function (d, i) {
+                console.log(i)
+                return i * RECTHEIGHT
+            })
+            .attr("width", function (d) {
+                return d;
+            })
+            .attr("height", RECTHEIGHT - 2)
+            .attr("fill", "#579AFF")
+
+    }
+}
+
+```
+
+在路由中使用此插件即可以看到：
+
+![2020-03-02-截屏2020-03-0211.44.51-MXtz1i](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-02-截屏2020-03-0211.44.51-MXtz1i.png)  
+
+这里需要注意的代码是：
+
+``` javascript
+barContainer
+    .attr("width",300)
+    .attr("heigt",185.4)
+    .selectAll("rect")
+    .data(DATASET)
+    .enter()
+    .append("rect")
+```
+
+其中 `data()` 方法
 

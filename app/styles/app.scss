@@ -1,2 +1,48 @@
-
 @import "ember-bootstrap/bootstrap";
+
+.coordinate {
+    width: 300px;
+    height: 185.4px;
+}
+
+.pb-tm-axis path,
+.pb-tm-axis line {
+    fill: none;
+    stroke: #DFE1E6;
+    shape-rendering: crispEdges;
+}
+
+.pb-tm-axis text {
+    font-family: PingFangSC-Regular;
+    font-size: 14px;
+    color: #7A869A;
+}
+
+/*
+ * bp-bar styles */
+
+.bp-bar {
+    width: 874px;
+    height: 305px;
+    margin: auto;
+
+    .bp-bar-rect {
+        fill: #579AFF
+    }
+
+    .x-axis,.y-axis {
+
+        path,
+        line {
+            fill: none;
+            stroke: #DFE1E6;
+            shape-rendering: crispEdges;
+        }
+
+        text {
+            font-family: PingFangSC-Regular;
+            font-size: 14px;
+            color: #7A869A;
+        }
+    }
+}

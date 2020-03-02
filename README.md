@@ -163,7 +163,22 @@ export default class D3BindData extends Component<D3BindDataArgs> {
 
 先从最简单的 柱状图 开始：
 
-涉及到 HTML 5 中的 [svg](https://developer.mozilla.org/zh-CN/docs/Web/SVG)
+涉及到 HTML 5 中的 [svg](https://developer.mozilla.org/zh-CN/docs/Web/SVG) 
+
+svg 包含六种基本图形：
+
+- 矩形 rect
+- 圆形
+- 椭圆
+- 线段
+- 折线
+- 多边形
+
+另外还有一种在 icon 中比较常见的：
+
+- 路径
+
+画布中的所有图形，都是由以上七种元素组成。
 
 ### 3.1 添加画布
 
@@ -260,6 +275,11 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
 
 ```
 
+其中，rect 元素的一些属性说明
+
+- x 属性定义矩形的左侧位置（例如，x="0" 定义矩形到浏览器窗口左侧的距离是 0px）
+- y 属性定义矩形的顶端位置（例如，y="0" 定义矩形到浏览器窗口顶端的距离是 0px）
+
 在路由中使用此插件即可以看到：
 
 ![2020-03-02-截屏2020-03-0211.44.51-MXtz1i](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-02-截屏2020-03-0211.44.51-MXtz1i.png)  
@@ -334,3 +354,186 @@ initScale() {
 ```
 
 展示的效果和 3.2 中的图片相同。
+
+
+
+### 3.4 添加坐标轴
+
+在 d3 中有专门的坐标轴相关的 [API](https://github.com/xswei/d3js_doc/blob/master/API_Reference/API.md#axes-d3-axis) 。
+
+同样利用上节中相同的数据来生成图表，并添加坐标轴：
+
+``` handlebars
+{{!-- d3/basic-histogram.hbs --}}
+{{!-- ... --}}
+
+<h3>3.4 coordinate</h3>
+<svg class="coordinate" {{did-insert this.initAxes}}></svg>
+```
+
+``` typescript
+// d3/basic-histogram.ts
+// ...
+@action
+initAxes() {
+    const linear = scaleLinear()
+    .domain([0, max(dataset)])
+    .range([0, 250]);
+
+
+    let svgContainer = select(".coordinate");
+
+    svgContainer
+    // 样式放入了类中进行控制
+        .selectAll("rect")
+        .data(dataset)
+        .enter()
+        .append("rect")
+        .attr("x", 20)
+        .attr("y", (d, i: number) => i * RECTHEIGHT)
+        .attr("width", d => linear(d))
+        .attr("height", RECTHEIGHT - 2)
+        .attr("fill", "#FFC400");
+
+    const axis = axisBottom(linear)
+    .ticks(7);
+
+    svgContainer.append("g")
+        .attr("class","pb-tm-axis")
+        .attr("transform","translate(20,130)").call(axis)
+
+}
+// ...
+```
+
+``` scss
+// 样式文件
+.coordinate {
+    width: 300px;
+    height: 185.4px;
+}
+
+.pb-tm-axis path,
+.pb-tm-axis line {
+    fill: none;
+    stroke: #DFE1E6;
+    shape-rendering: crispEdges;
+}
+
+.pb-tm-axis text {
+    font-family: PingFangSC-Regular;
+    font-size: 14px;
+    color: #7A869A;
+}
+```
+
+最后展示的效果：
+
+![2020-03-02-截屏2020-03-0215.27.20-yKr4Vs](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-02-截屏2020-03-0215.27.20-yKr4Vs.png)
+
+## 4. 完整的柱状图
+
+![2020-03-02-截屏2020-03-0219.08.45-MjvX1N](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-02-截屏2020-03-0219.08.45-MjvX1N.png) 
+
+这是仿照 ucb 中一个混合图提取出来的柱状图。目前是纯展示的图表。
+
+具体的实现是
+
+``` handlebars
+{{!-- d3/bp-bar.hbs --}}
+<div class="bp-bar" {{did-insert this.initBar}}></div>
+```
+
+``` typescript
+// d3/bp-bar.ts
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { select } from 'd3-selection';
+import { scaleLinear, scaleBand } from 'd3-scale';
+import { max } from 'd3-array';
+import { axisBottom, axisLeft } from 'd3-axis';
+
+interface D3BpBarArgs { }
+
+const DATASET = [
+    ['2018Q1', 2263262.25, 2584466.75, "0.8757", "all", null],
+    ['2018Q2', 2194822.96875, 2643496, "0.8303", "all", null],
+    ['2018Q3', 2359731.25, 2770609.75, "0.8517", "all", null],
+    ['2018Q4', 2165844.0625, 2914783.4375, "0.7431", "all", null],
+    ['201Q91', 704715.671875, 2274136, "0.3099", "all", null],
+    ['201Q92', 677539.40625, 2806879, "0.2414", "all", null],
+    ['201Q93', 679346.203125, 2975934, "0.2283", "all", null]
+]
+
+export default class D3BpBar extends Component<D3BpBarArgs> {
+    @action
+    initBar() {
+        // 声明变量
+        const svgContainer = select('.bp-bar');
+        const width: number = Number(svgContainer.style("width").split("p")[0])
+        const height: number = Number(svgContainer.style("height").split("p")[0])
+        const padding = { top: 24, right: 24, bottom: 24, left: 84 }
+        const barWidth = 16;
+        /**
+         * 添加 svg 画布
+         */
+        const svg = svgContainer
+            .append('svg')
+            .attr("width", width)
+            .attr("height", height);
+        /**
+         * x 轴的比例尺
+         */
+        let xAxisData = DATASET.map((ele: any[]): string => ele[0]);
+        console.log(xAxisData)
+        const xScale = scaleBand()
+            .domain(xAxisData)
+            .range([0, width - padding.left])
+        /**
+         * y 轴的比例尺
+         */
+        let yAxisData = DATASET.map((ele: Array<any>): number => ele[1])
+        const yScale = scaleLinear()
+            .domain([0, max(yAxisData)])
+            .range([height - padding.top - padding.bottom, 0]);
+
+        /**
+         * 定义坐标轴
+         */
+        let xAxis = axisBottom(xScale);
+        let yAxis = axisLeft(yScale);
+
+        /**
+         * 添加柱状图
+         */
+        svg.selectAll('rect')
+            .data(DATASET)
+            .enter()
+            .append('rect')
+            .classed('bp-bar-rect', true)
+            .attr("transform", `translate(${padding.left},${ padding.top})`)
+            .attr('x', (d) => {
+                return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
+            })
+            .attr('y', (d) => yScale(d[1]))
+            .attr('width', barWidth + "px")
+            .attr('height', (d) => height - padding.top - padding.bottom - yScale(d[1]))
+            .text((d: any) => d[4]);
+
+        /***
+         * 添加坐标轴
+         */
+        svg.append('g')
+            .classed('x-axis', true)
+            .attr("transform", "translate(" + padding.left + "," + (height - padding.bottom) + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .classed('y-axis', true)
+            .attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+            .call(yAxis);
+
+    }
+}
+```
+

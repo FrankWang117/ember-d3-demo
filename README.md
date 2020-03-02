@@ -332,12 +332,17 @@ initScale() {
         .attr("width", 300)
         .attr("heigt", 185.4)
         .selectAll("rect")
-        .data(dataset,  (d)=> d)
-    		/**
-             * 当svg 内已有元素时，会导致以后的元素不能正确
-             * 显示，添加data() 方法的第二个参数可解决。
-             * 不过有待进一步深入理解
-            */
+        .data(dataset)
+        .attr("x", 20)
+        .attr("y", function (d, i) {
+        return i * RECTHEIGHT
+    })
+        .attr("width", function (d) {
+        return linear(d);
+    })
+        .attr("height", RECTHEIGHT - 2)
+        .attr("fill", "#C2DAFF")
+    // 为何重复设置 attr 见下文解释
         .enter()
         .append("rect")
         .attr("x", 20)
@@ -355,8 +360,9 @@ initScale() {
 
 展示的效果和 3.2 中的图片相同。
 
+文中代码中的解释：
 
-
+当svg 内已有元素时，会导致以后的元素不能正确显示。这是因为已经存在的元素，使用 data() 之后，如果数据个数超出已存在的元素的个数，超出的这部分称之为 enter ，元素与数据对应的这部分称之为 update。需要对 update 部分以及 enter 部分的元素分别设置各种 attr，来达到一同展示的目的。具体解释可以[查看](https://wiki.jikexueyuan.com/project/d3wiki/enterexit.html) 
 ### 3.4 添加坐标轴
 
 在 d3 中有专门的坐标轴相关的 [API](https://github.com/xswei/d3js_doc/blob/master/API_Reference/API.md#axes-d3-axis) 。

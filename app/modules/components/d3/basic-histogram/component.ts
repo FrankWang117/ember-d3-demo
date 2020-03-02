@@ -56,11 +56,23 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
             .attr("width", 300)
             .attr("heigt", 185.4)
             .selectAll("rect")
-            .data(dataset, (d) => d)
+            .data(dataset)
+            .attr("x", 20)
+            .attr("y", function (d, i) {
+                return i * RECTHEIGHT
+            })
+            .attr("width", function (d) {
+                return linear(d);
+            })
+            .attr("height", RECTHEIGHT - 2)
+            .attr("fill", "#C2DAFF")
             /**
-             * 当svg 内已有元素时，会导致以后的元素不能正确
-             * 显示，添加data() 方法的第二个参数可解决。
-             * 不过有待进一步深入理解
+             * 当svg 内已有元素时，会导致以后的元素不能正确显示
+             * 这是因为已经存在的元素，使用 data() 之后，如果数据个数超出
+             * 已存在的元素的个数，超出的这部分称之为 enter ，元素与数据对应的
+             * 这部分称之为 update。需要对 update 部分以及 enter 部分的元素分别设置
+             * 各种 attr，来达到一同展示的目的。
+             * 具体解释可以查看 https://wiki.jikexueyuan.com/project/d3wiki/enterexit.html
             */
             .enter()
             .append("rect")

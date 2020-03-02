@@ -247,7 +247,6 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
             .append("rect")
             .attr("x", 20)
             .attr("y", function (d, i) {
-                console.log(i)
                 return i * RECTHEIGHT
             })
             .attr("width", function (d) {
@@ -274,8 +273,64 @@ barContainer
     .selectAll("rect")
     .data(DATASET)
     .enter()
-    .append("rect")
+  .append("rect")
 ```
 
-其中 `data()` 方法
+其中 `data()` 方法将指定数组的数据 *data* 与已经选中的元素进行绑定并返回一个新的选择集，返回的新的选择集使用 *update* 表示: 此时数据已经成功的与元素绑定。
 
+
+
+### 3.3 比例尺
+
+在实际的绘制图表的过程中，不可能像上述那样，根据数值去直接展示长度，需要进行一步比例尺的转换。  
+
+D3 提供了相关的比例尺转化的 [API](https://github.com/xswei/d3js_doc/blob/master/API_Reference/API.md#scales-d3-scale) 包括不限于： [d3.scaleLinear](https://github.com/xswei/d3-scale/blob/master/README.md#scaleLinear) 、[d3.scaleOrdinal](https://github.com/xswei/d3-scale/blob/master/README.md#scaleOrdinal) 等等。像一般简单的展示线性的比例尺的写法是：
+
+``` handlebars
+{{! d3/basic-histogram.hbs --}}
+{{! ... --}}
+<h3>3.3 scale</h3>
+<svg class="scale" {{did-insert this.initScale}}>
+     <rect></rect>
+</svg>
+```
+
+``` typescript
+// d3/basic-histogram.ts
+// ...
+@action
+initScale() {
+    const dataset = [2.5, 2.1, 1.7, 1.3, 0.9];
+
+    let linear = scaleLinear()
+    .domain([0, max(dataset,null)])
+    .range([0, 250]);
+
+    const barContainer = select(".scale");
+
+    barContainer
+        .attr("width", 300)
+        .attr("heigt", 185.4)
+        .selectAll("rect")
+        .data(dataset,  (d)=> d)
+    		/**
+             * 当svg 内已有元素时，会导致以后的元素不能正确
+             * 显示，添加data() 方法的第二个参数可解决。
+             * 不过有待进一步深入理解
+            */
+        .enter()
+        .append("rect")
+        .attr("x", 20)
+        .attr("y", function (d, i) {
+        return i * RECTHEIGHT
+    })
+        .attr("width", function (d) {
+        return linear(d);
+    })
+        .attr("height", RECTHEIGHT - 2)
+        .attr("fill", "#C2DAFF");
+}
+// ...
+```
+
+展示的效果和 3.2 中的图片相同。

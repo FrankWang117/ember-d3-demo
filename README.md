@@ -543,3 +543,78 @@ export default class D3BpBar extends Component<D3BpBarArgs> {
 }
 ```
 
+## 5. 添加 transition 以及交互
+
+直愣愣的图表需要一些动态效果来使其变得更生动。交互则可以让图表表达更具体的信息。
+
+### 5.1 transition 的添加
+
+transition 等动画在 d3 中添加是很容易的，和 css3 中的动画大相径庭。以上面的柱状图为例。
+
+我们想要的效果就是在第一次加载柱状图的时候能有一个从底至上的一个动画效果。
+
+``` ts
+// d3/bp-bar.ts
+// 。。。
+/**
+ * 添加柱状图
+ */
+	// svg.selectAll('rect')
+	//     .data(DATASET)
+	//     .enter()
+	//     .append('rect')
+	//     .classed('bp-bar-rect', true)
+	//     .attr("transform", `translate(${padding.left},${ padding.top})`)
+	//     .attr('x', (d) => {
+	//         return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
+	//     })
+	//     .attr('y', (d) => yScale(d[1]))
+	//     .attr('width', barWidth + "px")
+	//     .attr('height', (d) => height - padding.top - padding.bottom - yScale(d[1]))
+	//     .text((d: any) => d[4]);
+
+/**
+ * 为柱状图添加动画
+ */
+const t = transition()
+	.ease();
+
+svg.selectAll('rect')
+    .data(DATASET)
+    .enter()
+    .append('rect')
+    .classed('bp-bar-rect', true)
+    .attr("transform", `translate(${padding.left},${padding.top})`)
+    .attr('x', (d) => {
+    	return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
+	})
+    .attr('y', height - padding.bottom-24) // 24 为x坐标轴的高度
+    .attr('width', barWidth + "px")
+    .attr('height',0)
+    .transition(t)
+    .duration(4000)
+    .attr('y', (d) => yScale(d[1]))
+    .attr('height', (d) => height - padding.top - padding.bottom - yScale(d[1]))
+    .text((d: any) => d[4]);
+// 。。。
+```
+
+主要的代码是 `transition()` 这一行开始，在此行之前的状态与之后的状态通过此 API 进行动态展示。在此例子中将每个 `rect` 元素的 `y` 以及 `height` 经过 4000 ms 进行改变。
+
+### 5.2 交互
+
+``` ts
+svg.selectAll('rect')
+    .on('mouseover', function (d, i: number) {
+    	// 保证修改的元素的 fill 不是在 class 中
+    	// 而是通过 attr('fill',value) 定义的
+        select(this).attr("fill", "#FFC400")
+    })
+    .on('mouseout', function (d, i) {
+        select(this)
+            .transition()
+            .duration(1000)
+            .attr("fill", "#579AFF")
+})
+```
+

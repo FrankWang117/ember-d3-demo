@@ -38,7 +38,7 @@ export default class D3BpBar extends Component<D3BpBarArgs> {
          * x 轴的比例尺
          */
         let xAxisData = DATASET.map((ele: any[]): string => ele[0]);
-        console.log(xAxisData)
+        // console.log(xAxisData)
         const xScale = scaleBand()
             .domain(xAxisData)
             .range([0, width - padding.left])
@@ -86,7 +86,6 @@ export default class D3BpBar extends Component<D3BpBarArgs> {
             .classed('bp-bar-rect', true)
             .attr("fill", "#579AFF")
             .attr("transform", `translate(${padding.left},${padding.top})`)
-
             .attr('x', (d) => {
                 return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
             })

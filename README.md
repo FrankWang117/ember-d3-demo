@@ -3,6 +3,8 @@
 > ember-cli v3.16.0  
 > node 10.16.0
 
+[项目地址](https://github.com/FrankWang1991/ember-d3-demo) 
+
 ## 0. 前言
 1. 它是声明式的，不是命令式的d3的第一个核心是：数据驱动的dom元素创建，把这个思想上的弯绕过来，掌握1/3了
 2. 它是数据处理包，不是图形绘制包d3的第二个核心是：它的大量的api，提供的是对数据的转换与处理，无论是scale、layout还是svg.line等，都仅仅是对数据的处理，和绘制图形与DOM操作没有半毛关系。把这个思想上的弯绕过来，又掌握1/3了
@@ -545,7 +547,11 @@ export default class D3BpBar extends Component<D3BpBarArgs> {
 
 ## 5. 添加 transition 以及交互
 
-直愣愣的图表需要一些动态效果来使其变得更生动。交互则可以让图表表达更具体的信息。
+直愣愣的图表需要一些动态效果来使其变得更生动。交互则可以让图表表达更具体的信息。  
+
+![2020-03-04-d3-交互-kPUNEL](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-04-d3-交互-kPUNEL.gif) 
+
+
 
 ### 5.1 transition 的添加
 
@@ -617,4 +623,184 @@ svg.selectAll('rect')
             .attr("fill", "#579AFF")
 })
 ```
+
+上述交互的意图就是简单的更换柱状图的颜色。所以当前柱状图的 `fill` 不能够再写在样式类中，需要通过 `attr` 写在当前。
+
+## 6. layout - 饼图
+
+### 6.1 layout
+
+在学习饼图之前需要对 d3 中的 layout 有一定的了解。d3 的 layout 与 css 的 layout 是截然不同的两个概念。
+
+官方文章中对 layout 的定义：  
+
+>Layout functions sets up and modifies data so that it can be rendered in different shapes. The layout functions don't do the drawing of the shapes.
+
+大概意思就是 layout 函数设置以及修改数据以便其可以适用于不同的图形中。layout 函数不参与绘制图形。  
+
+有了这层的概念，就可以来看 layout 用于 饼图上的实例了。
+
+### 6.2 饼图
+
+![2020-03-04-截屏2020-03-0414.19.57-vxZdDk](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-04-截屏2020-03-0414.19.57-vxZdDk.png)  
+
+我们要得到这样的环形图。  
+
+创建一个新的 component
+
+``` shell
+ember g component d3/bp-pie
+```
+
+在其 handlebars 文件中:
+
+``` handlebars
+<div class="bp-pie" {{did-insert this.initPie}}></div>
+```
+
+与之前的组件大致相似。  
+
+那其逻辑文件则是：
+
+``` typescript
+// d3/bp-pie.ts
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { select } from 'd3-selection';
+import { tracked } from '@glimmer/tracking';
+import { pie, arc } from 'd3-shape';
+import { schemeCategory10 } from 'd3-scale-chromatic';
+
+interface D3BpPieArgs {
+    data: string | number[]
+    // data: [
+    //     ["癫痫竞品1", 2575385.5, null, "0.1952"],
+    //     ["开浦兰", 679346.1875, null, "0.0515"],
+    //     ["癫痫竞品2", 279866.65625, null, "0.0212"],
+    //     ["维派特", 0, null, "0.0000"],
+    //     ["其他竞品", 9662320.65625, null, "0.7322"]
+    //   ]
+}
+
+export default class D3BpPie extends Component<D3BpPieArgs> {
+    @tracked data = this.args.data
+    get layoutData() {
+        const pieLayout = pie()
+            // 设置如何从数据中获取要绘制的值
+            .value((d: any) => d[1])
+            // 设置排序规则 (null 表示原始排序)
+            .sort(null)
+            // 设置第一个数据的起始角度 (默认为 0)
+            .startAngle(0)
+            // 设置弧度的终止角度，(默认 2*Math.PI)
+            // endAngle - startAngle 为 2 π 则表示一个整圆
+            .endAngle(2 * Math.PI)
+            // 弧度之间的空隙角度(默认 0)
+            .padAngle(0);
+        return pieLayout(this.data)
+    }
+    @action
+    initPie() {
+        const container = select('.bp-pie');
+        // 声明变量 
+        const width: number = Number(container.style("width").split("p")[0])
+        const height: number = Number(container.style("height").split("p")[0])
+        const innerRadius = 84
+        const outerRadius = 100
+        // 生成 svg
+        let svg = container.append('svg')
+            .attr("width", width)
+            .attr("height", height)
+
+        const pieData = this.layoutData
+        // 基础 rect 设置
+        let arcins = arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius);
+
+        // hover 状态 rect 的设置
+        let arcOver = arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius + 15);
+
+        svg.selectAll('path.arc')
+            .data(pieData)
+            .enter()
+            .append('path')
+            .attr("transform", "translate(" + (width / 2) + "," + (height / 2) + ")")
+            .attr('fill', (d: any, i: number) => schemeCategory10[i])
+            .classed('arc', true)
+            .attr('d', arcins);
+
+        svg.selectAll('path.arc')
+            .on('mouseover', function () {
+                select(this)
+                    .transition()
+                    .duration(1000)
+                    .attr('d', arcOver)
+            })
+            .on('mouseout', function () {
+                select(this)
+                    .transition()
+                    .duration(100)
+                    .attr('d', arcins)
+            })
+    }
+}
+
+```
+
+使用到 layout 的是在 layoutData 属性上，使用的是 layout 的 pie() 函数。其中每行均有说明。返回的 `pieLayout(this.Data)` 的格式为：
+
+``` json
+[{
+	"data": ["癫痫竞品1", 2575385.5, null, "0.1952"],
+	"index": 0,
+	"value": 2575385.5,
+	"startAngle": 0,
+	"endAngle": 1.2261668298428863,
+	"padAngle": 0
+}, {
+	"data": ["开浦兰", 679346.1875, null, "0.0515"],
+	"index": 1,
+	"value": 679346.1875,
+	"startAngle": 1.2261668298428863,
+	"endAngle": 1.5496103535766053,
+	"padAngle": 0
+}, {
+	"data": ["癫痫竞品2", 279866.65625, null, "0.0212"],
+	"index": 2,
+	"value": 279866.65625,
+	"startAngle": 1.5496103535766053,
+	"endAngle": 1.6828576715695005,
+	"padAngle": 0
+}, {
+	"data": ["维派特", 0, null, "0.0000"],
+	"index": 3,
+	"value": 0,
+	"startAngle": 1.6828576715695005,
+	"endAngle": 1.6828576715695005,
+	"padAngle": 0
+}, {
+	"data": ["其他竞品", 9662320.65625, null, "0.7322"],
+	"index": 4,
+	"value": 9662320.65625,
+	"startAngle": 1.6828576715695005,
+	"endAngle": 6.283185307179586,
+	"padAngle": 0
+}]
+```
+
+可以看到，获得的数组中每个 item 都是一个对象，用来描述每一个弧度(rect)。其中包括：
+
+- 原始数据 `data`
+- 数据下标 `index`
+- 根据 value() 方法设置的需要展示的值 `value`
+- 本 rect 的开始角度 `startAngle`
+- 本 rect 的结束角度` endAngle`
+- 与其后 rect 的间隙角度大小 `padAngle`
+
+添加的事件展示出的动态效果即：
+
+![2020-03-04-pie-1-DQFJSR](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-04-pie-1-DQFJSR.gif) 
 

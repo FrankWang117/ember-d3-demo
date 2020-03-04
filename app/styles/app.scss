@@ -30,7 +30,8 @@
         // fill: #579AFF
     }
 
-    .x-axis,.y-axis {
+    .x-axis,
+    .y-axis {
 
         path,
         line {
@@ -44,5 +45,17 @@
             font-size: 14px;
             color: #7A869A;
         }
+    }
+}
+
+// bp-pie style
+.bp-pie {
+    width: 572px;
+    height: 319px;
+    margin: auto;
+
+    svg {
+        background-color: #FAFBFC;
+
     }
 }

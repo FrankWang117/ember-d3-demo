@@ -21,7 +21,9 @@
 /*
  * bp-bar styles */
 
-.bp-bar,.bp-line {
+.bp-bar,
+.bp-line,
+.bp-multiline {
     width: 874px;
     height: 305px;
     margin: auto;

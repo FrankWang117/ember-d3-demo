@@ -91,7 +91,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
          svg.append('g')
              .append('path')
              .classed('line-path', true)
-             .attr('transform', `translate(${padding.left + yAxisWidth},${padding.top})`)
+             .attr('transform', `translate(${yAxisWidth+xScale.bandwidth()/2},${padding.top})`)
              .attr('d', lineLayout(dataset))
              .attr('fill', 'none')
              .attr('stroke-width', 2)
@@ -101,7 +101,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
         svg.append("path")
             .datum(dataset)
             .classed('line-path', true)
-            .attr('transform', `translate(${padding.left + yAxisWidth},${padding.top})`)
+            .attr('transform', `translate(${ yAxisWidth+xScale.bandwidth()/2},${padding.top})`)
             .attr("d", lineLayout)
             .attr('fill', 'none')
             .attr('stroke-width', 2)
@@ -120,7 +120,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
         circles.append('circle')
             .attr('r', 3)
             .attr('transform', function (d) {
-                return 'translate(' + (xScale(d[0]) + padding.left + yAxisWidth) + ',' + (yScale(d[1]) + padding.top) + ')'
+                return 'translate(' + (xScale(d[0]) +xScale.bandwidth()/2 + yAxisWidth) + ',' + (yScale(d[1]) + padding.top) + ')'
             })
             .attr('stroke', '#FFAB00')
             .attr('fill', 'white')

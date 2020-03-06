@@ -5,10 +5,10 @@ import { scaleBand, scaleTime, scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max, min } from 'd3-array';
 import { line, curveCatmullRom } from 'd3-shape';
-import { interpolateString } from 'd3-interpolate';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 // import { timeMonth } from 'd3-time';
 // import { timeFormat } from 'd3-time-format'
+import { tweenDash } from '../../../../utils/d3/animation';
 
 interface D3BpMultiLinesArgs {
     data: any[]
@@ -43,15 +43,16 @@ export default class D3BpMultiLines extends Component<D3BpMultiLinesArgs> {
     private width: number | string = "100%"
     private height: number | string = "100%"
     // 动画函数
-    private tweenDash() {
-        let l = this.getTotalLength(),
-            i = interpolateString("0," + l, l + "," + l);
-        return function (t: any) { return i(t); };
-    }
+    // private tweenDash() {
+    //     let l = this.getTotalLength(),
+    //         i = interpolateString("0," + l, l + "," + l);
+    //     return function (t: any) { return i(t); };
+    // }
     @action
     initLine() {
         const dataset = this.args.data
         const container = select(".bp-multiline")
+        console.log(container)
         this.width = parseInt(container.style("width"))
         this.height = parseInt(container.style("height"))
         const padding = {
@@ -88,7 +89,7 @@ export default class D3BpMultiLines extends Component<D3BpMultiLinesArgs> {
             let minXvalue = new Date(min(xLabel))
             let maxXvalue = new Date(max(xLabel))
          */
-        
+
         const xScale = scaleBand()
             .domain(dataset[0].map((ele: any[]) => ele['label']))
             // 为了 scaleTime
@@ -108,7 +109,7 @@ export default class D3BpMultiLines extends Component<D3BpMultiLinesArgs> {
         const lineLayout = line().x((d: any[]) => xScale(d['label']))
             .y((d: any) => yScale(d['value']))
             .curve(curveCatmullRom.alpha(0.5))
-        
+
         // 多折线的数据展示方式-1
         dataset.forEach((data: any, index: number) => {
             svg.append("path")
@@ -127,7 +128,7 @@ export default class D3BpMultiLines extends Component<D3BpMultiLinesArgs> {
 
             circles.append('circle')
                 .attr('r', 3)
-                .attr('transform',  (d:any) =>`translate( ${xScale(d['label']) +  yAxisWidth+xScale.bandwidth() / 2},${yScale(d['value']) + padding.top})`)
+                .attr('transform', (d: any) => `translate( ${xScale(d['label']) + yAxisWidth + xScale.bandwidth() / 2},${yScale(d['value']) + padding.top})`)
                 .attr('stroke', schemeCategory10[index])
                 .attr('fill', 'white')
                 .on('mouseover', function () {
@@ -168,7 +169,7 @@ export default class D3BpMultiLines extends Component<D3BpMultiLinesArgs> {
         svg.selectAll('.line-path')
             .transition()
             .duration(4000)
-            .attrTween("stroke-dasharray", this.tweenDash);
+            .attrTween("stroke-dasharray", tweenDash);
 
     }
 }

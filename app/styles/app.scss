@@ -61,3 +61,31 @@
 
     }
 }
+
+.bp-map {
+    width: 664px;
+    height: 385px;
+    margin: 0 auto;
+
+    .continent {
+        // fill: #fafbfc;
+        // stroke: white;
+        stroke-width: 0.5;
+    }
+
+    .linear-text {
+        font-family: PingFangSC-Regular;
+        font-size: 12px;
+        fill: #7A869A;
+    }
+    .southsea {
+		stroke: black;
+		stroke-width: 1px;
+		fill: #e7f0fe;
+	}
+}
+
+.path-active {
+    fill: #e7f0fe;
+    stroke: #acbcd6;
+}

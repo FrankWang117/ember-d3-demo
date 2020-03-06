@@ -5,7 +5,7 @@ import { scaleBand, scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max } from 'd3-array';
 import { line, curveCatmullRom } from 'd3-shape';
-import { interpolateString } from 'd3-interpolate';
+import { tweenDash } from '../../../../utils/d3/animation';
 
 interface D3BpLineArgs {
     data: any[]
@@ -30,11 +30,11 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
     private width: number | string = "100%"
     private height: number | string = "100%"
     // 动画函数
-    private tweenDash() {
-        let l = this.getTotalLength(),
-            i = interpolateString("0," + l, l + "," + l);
-        return function (t:any) { return i(t); };
-    }
+    // private tweenDash() {
+    //     let l = this.getTotalLength(),
+    //         i = interpolateString("0," + l, l + "," + l);
+    //     return function (t:any) { return i(t); };
+    // }
     @action
     initLine() {
         const dataset = this.args.data
@@ -101,7 +101,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
         svg.append("path")
             .datum(dataset)
             .classed('line-path', true)
-            .attr('transform', `translate(${ yAxisWidth+xScale.bandwidth()/2},${padding.top})`)
+            .attr('transform', `translate(${yAxisWidth + xScale.bandwidth() / 2},${padding.top})`)
             .attr("d", lineLayout)
             .attr('fill', 'none')
             .attr('stroke-width', 2)
@@ -110,7 +110,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
         svg.select('.line-path')
             .transition()
             .duration(4000)
-            .attrTween("stroke-dasharray", this.tweenDash);
+            .attrTween("stroke-dasharray", tweenDash);
 
         let circles = svg.append('g')
             .selectAll('circle')
@@ -120,7 +120,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
         circles.append('circle')
             .attr('r', 3)
             .attr('transform', function (d) {
-                return 'translate(' + (xScale(d[0]) +xScale.bandwidth()/2 + yAxisWidth) + ',' + (yScale(d[1]) + padding.top) + ')'
+                return 'translate(' + (xScale(d[0]) + xScale.bandwidth() / 2 + yAxisWidth) + ',' + (yScale(d[1]) + padding.top) + ')'
             })
             .attr('stroke', '#FFAB00')
             .attr('fill', 'white')

@@ -5,8 +5,7 @@ import { scaleBand, scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max } from 'd3-array';
 import { line, curveCatmullRom } from 'd3-shape';
-import { tweenDash } from '../../../../utils/d3/animation';
-
+import { tweenDash, circleChange,animationType } from '../../../../utils/d3/animation';
 interface D3BpLineArgs {
     data: any[]
     /**
@@ -35,6 +34,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
     //         i = interpolateString("0," + l, l + "," + l);
     //     return function (t:any) { return i(t); };
     // }
+
     @action
     initLine() {
         const dataset = this.args.data
@@ -64,7 +64,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
 
         // 动态获取y坐标轴的宽度
         const yAxisWidth: number = svg.select('.y-axis').node().getBBox().width;
-
+        
         svg.select(".y-axis")
             .attr("transform", `translate(${padding.left + yAxisWidth},${padding.top})`)
 
@@ -107,8 +107,10 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
             .attr('stroke-width', 2)
             .attr('stroke', '#FFAB00');
         // 添加初始动画
+        const t = animationType();
+
         svg.select('.line-path')
-            .transition()
+            .transition(t)
             .duration(4000)
             .attrTween("stroke-dasharray", tweenDash);
 
@@ -117,33 +119,41 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
             .data(dataset)
             .enter()
 
-        circles.append('circle')
-            .attr('r', 3)
+        let combCirle = circles
+            .append('g')
+            .classed("comb-circle", true)
+            .style("width", 10)
+            .attr("height",10)
             .attr('transform', function (d) {
                 return 'translate(' + (xScale(d[0]) + xScale.bandwidth() / 2 + yAxisWidth) + ',' + (yScale(d[1]) + padding.top) + ')'
-            })
+            });
+
+        combCirle
+            .append('circle')
+            .classed("outer-circle", true)
+            .attr('r', 3)
             .attr('stroke', '#FFAB00')
-            .attr('fill', 'white')
+            .attr('fill', 'white');
+
+        combCirle
+            .append('circle')
+            .classed("inner-circle", true)
+            .attr('r', 1)
+            .attr('stroke', '#FFAB00')
+            .attr('fill', '#FFAB00');
+        combCirle
             .on('mouseover', function () {
-                select(this)
-                    .transition()
-                    .duration(600)
-                    .attr('r', 6)
+                circleChange(select(this).select('.outer-circle'), 6)
+                circleChange(select(this).select('.inner-circle'), 4)
             })
             .on('mouseout', function () {
-                select(this)
-                    .transition()
-                    .duration(600)
-                    .attr('r', 3)
+                circleChange(select(this).select('.outer-circle'), 3)
+                circleChange(select(this).select('.inner-circle'), 1)
             })
-        // circles
-        // .append('circle')
-        // .attr('r', 2)
-        // .attr('transform', function (d) {
-        //     return 'translate(' + (xScale(d[0]) + padding.left+yAxisWidth) + ',' + (yScale(d[1]) + padding.top) + ')'
-        // })
-        // .attr('stroke','#FFAB00')
-        // .attr('fill', '#FFAB00')
+
+
+
+
 
     }
 }

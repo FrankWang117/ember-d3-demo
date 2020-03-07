@@ -22,16 +22,11 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 		return this.pieData
 	}
 	@action
-	testClick() {
-		console.log('ddddddd')
-	}
-	@action
 	changeNav(nav: string) {
 		this.navTitle = nav
 	}
 	@action
 	changePie() {
-		console.log(this.args.model)
 		let random = () => Math.random() * 100
 		this.pieData = [
 			["癫痫竞品1", random(), null, "0.1952"],

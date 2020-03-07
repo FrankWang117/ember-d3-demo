@@ -43,13 +43,12 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
     }
     @action
     initPie() {
-        console.log("init Pie")
         const container = select('.bp-pie');
         // 声明变量 
         // TODO 如果能提取出去作为参数传入更好了
         const width: number = Number(container.style("width").split("p")[0])
-        const height: number = Number(container.style("height").split("p")[0])
-        console.log(this)
+        const height: number = Number(container.style("height").split("p")[0]);
+        
         const { innerRadius, outerRadius } = this
         // 生成 svg
         let svg = container.append('svg')

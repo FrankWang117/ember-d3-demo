@@ -1,3 +1,24 @@
-
-<D3::Wrapper @model={{@model}} />
-{{outlet}}
+{{!-- <div class="container d3-container bg-light">
+	<div class="row">
+		<nav class="col-3 d3-nav ">
+			<ul class="nav flex-column">
+				<li class="nav-item">
+					<a class="nav-link active" href="#">Hello</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Link</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Link</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link disabled" href="#">Disabled</a>
+				</li>
+			</ul>
+		</nav>
+		<section class="col-9 d3-content">
+			<D3::Wrapper @model= {{@model}} />
+		</section>
+	</div>
+</div> --}}
+<D3::Wrapper @model= {{@model}} /> {{outlet}}

@@ -1,5 +1,48 @@
+<div class="container d3-container bg-light main">
+	<div class="row">
+		<nav class="col-3 d3-nav ">
+			<ul class="nav flex-column">
+				{{#each this.menuList as |menu|}}
+					<Nav::MenuItem 
+						@menu={{menu}} 
+						@activeNav={{this.navTitle}} 
+						@changeNav={{this.changeNav}}
+					/> 
+				{{/each}}
+			</ul>
+		</nav>
+		<section class="col-9 d3-content">
+			{{!-- {{#each this.menuList as |content|}}
+				{{component content.comp class="m-2 (if (eq this.navTitle content.identify) " " "d-none")" }}
+			{{/each}} --}}
+			<D3::HelloWorld class="m-2 {{if (eq this.navTitle "hello") "" "d-none"}}" />
+
+			<D3::BindData class="m-2 {{if (eq this.navTitle "bind") "" "d-none"}}" />
+
+			{{!-- <h2>d3-3 basic-Histogram</h2> --}}
+			<D3::BasicHistogram  class="m-2 {{if (eq this.navTitle "histo") "" "d-none"}}" />
+			{{!-- <h2>d3-4 bar</h2> --}}
+
+			<D3::BpBar class="m-2 {{if (eq this.navTitle "bar") "" "d-none"}}" />
+			{{!-- <h2>d3-6 Layout</h2>
+			<h3>d3-6.1 what's layout in d3</h3>
+			<p>some explain</p>
+			<h3>d3-6.2 Pie Demo</h3> --}}
+			<D3::BpPie class="m-2 {{if (eq this.navTitle "pie") "" "d-none"}}" @data={{this.pieResult}} />
+			{{!-- <h3>d3-6.3 Line Demo</h3> --}}
+			<D3::BpLine class="m-2 {{if (eq this.navTitle "line") "" "d-none"}}" @data={{@model.barData}} />
+			{{!-- <h3>d3-6.4 multi Lines Demo</h3> --}}
+			<D3::BpMultiLines class="m-2 {{if (eq this.navTitle "lines") "" "d-none"}}" @data={{@model.multiLineData}} />
+			{{!-- <h3>d3-7 Map demo</h3> --}}
+			<D3::BpMap class="m-2 {{if (eq this.navTitle "map") "" "d-none"}}" @data={{@model.mapData}} />
+
+			{{!-- <button type="button" {{on 'click' this.changePie}}>changePieData</button> --}}
+		</section>
+	</div>
+</div>
+{{!--
 <h2 class="p-1">d3-1 helloworld</h2>
-<D3::HelloWorld class="m-2"/>
+<D3::HelloWorld class="m-2" />
 <div class="dropdown-divider"></div>
 <h2>d3-2 bind-data</h2>
 <D3::BindData />
@@ -21,4 +64,4 @@
 <h2>A placeholder</h2>
 <h2>A placeholder</h2>
 <h2>A placeholder</h2>
-<button type="button" {{on 'click' this.changePie}}>changePieData</button>
+<button type="button" {{on 'click' this.changePie}}>changePieData</button> --}}

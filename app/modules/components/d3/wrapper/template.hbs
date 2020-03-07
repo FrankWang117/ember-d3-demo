@@ -23,27 +23,23 @@
 			{{else if (eq this.navTitle "histo")}}
 				<D3::BasicHistogram  class="m-2 {{if (eq this.navTitle "histo") "" "d-none"}}" />
 			{{else if (eq this.navTitle "bar")}}
-			<D3::BpBar class="m-2 {{if (eq this.navTitle "bar") "" "d-none"}}" />
-
+				<D3::BpBar class="m-2 {{if (eq this.navTitle "bar") "" "d-none"}}" />
 			{{else if (eq this.navTitle "pie")}}
-			<D3::BpPie class="m-2 {{if (eq this.navTitle "pie") "" "d-none"}}" @data={{this.pieResult}} />
-
+				<D3::BpPie class="m-2 {{if (eq this.navTitle "pie") "" "d-none"}}" 
+					@data={{this.pieData}} />
+				<button type="button" class="btn btn-info" {{on 'click' this.changePie}}>changePieData</button>
+				<BsButton @type="info" @onClick={{action "changePieCount"}}>changePieCount</BsButton>
 			{{else if (eq this.navTitle "line")}}
-			<D3::BpLine class="m-2 {{if (eq this.navTitle "line") "" "d-none"}}" @data={{@model.barData}} />
-
+				<D3::BpLine class="m-2 {{if (eq this.navTitle "line") "" "d-none"}}" @data={{@model.barData}} />
 			{{else if (eq this.navTitle "lines")}}
-			<D3::BpMultiLines class="m-2 {{if (eq this.navTitle "lines") "" "d-none"}}" @data={{@model.multiLineData}} />
-
+				<D3::BpMultiLines class="m-2 {{if (eq this.navTitle "lines") "" "d-none"}}" @data={{@model.multiLineData}} />
 			{{else if (eq this.navTitle "map")}}
-			<D3::BpMap class="m-2 {{if (eq this.navTitle "map") "" "d-none"}}" @data={{@model.mapData}} />
-			
+				<D3::BpMap class="m-2 {{if (eq this.navTitle "map") "" "d-none"}}" @data={{@model.mapData}} />
 			{{/if}}
+
 			{{!-- <D3::HelloWorld class="m-2 {{if (eq this.navTitle "hello") "" "d-none"}}" /> --}}
-
 			{{!-- <D3::BindData class="m-2 {{if (eq this.navTitle "bind") "" "d-none"}}" /> --}}
-
 			{{!-- <D3::BasicHistogram  class="m-2 {{if (eq this.navTitle "histo") "" "d-none"}}" /> --}}
-
 			{{!-- <D3::BpBar class="m-2 {{if (eq this.navTitle "bar") "" "d-none"}}" /> --}}
 			{{!-- <D3::BpPie class="m-2 {{if (eq this.navTitle "pie") "" "d-none"}}" @data={{this.pieResult}} /> --}}
 			{{!-- <D3::BpLine class="m-2 {{if (eq this.navTitle "line") "" "d-none"}}" @data={{@model.barData}} /> --}}
@@ -54,28 +50,3 @@
 		</section>
 	</div>
 </div>
-{{!--
-<h2 class="p-1">d3-1 helloworld</h2>
-<D3::HelloWorld class="m-2" />
-<div class="dropdown-divider"></div>
-<h2>d3-2 bind-data</h2>
-<D3::BindData />
-<h2>d3-3 basic-Histogram</h2>
-<D3::BasicHistogram />
-<h2>d3-4 bar</h2>
-<D3::BpBar />
-<h2>d3-6 Layout</h2>
-<h3>d3-6.1 what's layout in d3</h3>
-<p>some explain</p>
-<h3>d3-6.2 Pie Demo</h3>
-<D3::BpPie @data={{this.pieResult}}/>
-<h3>d3-6.3 Line Demo</h3>
-<D3::BpLine @data={{@model.barData}} />
-<h3>d3-6.4 multi Lines Demo</h3>
-<D3::BpMultiLines @data={{@model.multiLineData}} />
-<h3>d3-7 Map demo</h3>
-<D3::BpMap @data={{@model.mapData}} />
-<h2>A placeholder</h2>
-<h2>A placeholder</h2>
-<h2>A placeholder</h2>
-<button type="button" {{on 'click' this.changePie}}>changePieData</button> --}}

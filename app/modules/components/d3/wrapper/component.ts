@@ -27,6 +27,7 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 	}
 	@action
 	changePie() {
+		console.log("changePie")
 		let random = () => Math.random() * 100
 		this.pieData = [
 			["癫痫竞品1", random(), null, "0.1952"],
@@ -35,5 +36,15 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 			["维派特", random(), null, "0.0000"],
 			["其他竞品", random(), null, "0.7322"]
 		]
+	}
+	@action
+	changePieCount() {
+		let len = () => Math.random() * 10 + 3
+		let random = () => Math.random() * 100
+		let data = []
+		for(let i = 0,l = len();i<l;i++) {
+			data.push(["癫痫竞品"+i, random(), null, "0.1952"])
+		}
+		this.pieData = data
 	}
 }

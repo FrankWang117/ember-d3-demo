@@ -8,8 +8,8 @@ class Layout {
         pb: 24,
         pl: 24
     }
-    private width: number | string = "100%"
-    private height: number | string = "100%"
+    private width: number 
+    private height: number
     private container: Selection<BaseType,unknown,HTMLElement,null> 
     constructor(querySelectorValue:string) {
         let container = select(querySelectorValue)
@@ -31,13 +31,13 @@ class Layout {
     public getWidth() {
         return this.width
     }
-    public setWidth(w: number | string) {
+    public setWidth(w: number ) {
         this.width = w
     }
     public getHeight() {
         return this.height
     }
-    public setHeight(h: number | string) {
+    public setHeight(h: number ) {
         this.height = h
     }
     public getContainer() {

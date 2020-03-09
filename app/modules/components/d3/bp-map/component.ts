@@ -7,9 +7,15 @@ import { geoPath, geoMercator } from 'd3-geo';
 import { max, min } from 'd3-array';
 import { select } from 'd3-selection';
 import { format } from 'd3-format';
+import {animationType} from '../../../../utils/d3/animation';
 
 interface D3BpMapArgs {
     data: any[]
+    // [
+    //     ["广东", 1, 73016024],
+    //     ["河南", 1, 60152736],
+    //     ...
+    // ]
     width: number
     height: number
 }
@@ -86,8 +92,10 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
                         select(this)
                             .classed('path-active', false)
                     })
+                
+                    const t = animationType();
 
-                paths.transition()
+                paths.transition(t)
                     .duration(1000)
                     .attr('fill', (d: any) => {
                         let prov = d.properties.name;

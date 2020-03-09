@@ -1,9 +1,12 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { select } from 'd3-selection';
 import { tracked } from '@glimmer/tracking';
 import { pie, arc } from 'd3-shape';
 import { schemeCategory10 } from 'd3-scale-chromatic';
+import { animationType } from '../../../../utils/d3/animation';
+import { interpolate } from 'd3-interpolate';
+import Layout from 'ember-d3-demo/utils/d3/layout';
+import { select, Selection, BaseType } from 'd3-selection';
 
 interface D3BpPieArgs {
     data: string | number[]
@@ -14,6 +17,8 @@ interface D3BpPieArgs {
     //     ["维派特", 0, null, "0.0000"],
     //     ["其他竞品", 9662320.65625, null, "0.7322"]
     //   ]
+    width: number
+    height: number
     innerRadius: number
     outerRadius: number
 }
@@ -22,9 +27,17 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
     @tracked data = this.args.data
     @tracked innerRadius = this.args.innerRadius || 84
     @tracked outerRadius = this.args.outerRadius || 100
-    container: any = null // svg 容器
+    private container: Selection<BaseType, unknown, HTMLElement, null>// svg 容器
     width: number = 0 // svg width
     height: number = 0 // svg height
+    arc: any = null
+    private arcTween(arc: any) {
+        return function (a: any) {
+            const i = interpolate(this._current, a);
+            this._current = i(1);
+            return (t:any) => arc(i(t));
+        }
+    }
     get layoutData() {
         let data = this.args.data
         const pieLayout = pie()
@@ -43,13 +56,25 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
     }
     @action
     initPie() {
-        console.log("init Pie")
-        const container = select('.bp-pie');
-        // 声明变量 
-        // TODO 如果能提取出去作为参数传入更好了
-        const width: number = Number(container.style("width").split("p")[0])
-        const height: number = Number(container.style("height").split("p")[0])
-        console.log(this)
+        let layout = new Layout('.bp-pie')
+
+        let { width, height } = this.args
+
+        if (width) {
+            layout.setWidth(width)
+        } else {
+            width = layout.getWidth()
+        }
+        if (height) {
+            layout.setHeight(height)
+        } else {
+            height = layout.getHeight()
+        }
+        const container = layout.getContainer()
+        this.width = layout.getWidth()
+        this.height = layout.getHeight()
+        this.container = container
+
         const { innerRadius, outerRadius } = this
         // 生成 svg
         let svg = container.append('svg')
@@ -61,6 +86,8 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
         let arcins = arc()
             .innerRadius(innerRadius)
             .outerRadius(outerRadius);
+
+        this.arc = arcins;
 
         // hover 状态 rect 的设置
         let arcOver = arc()
@@ -76,18 +103,40 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
             .classed('arc', true)
             .attr('d', arcins);
 
+        const t: any = animationType()
+
         svg.selectAll('path.arc')
             .on('mouseover', function () {
                 select(this)
-                    .transition()
+                    .transition(t)
                     .duration(1000)
                     .attr('d', arcOver)
             })
             .on('mouseout', function () {
                 select(this)
-                    .transition()
+                    .transition(t)
                     .duration(100)
                     .attr('d', arcins)
             })
+    }
+
+    @action
+    updatePie() {
+        const pieData = this.layoutData
+        const svg = select('.bp-pie svg');
+        const t: any = animationType()
+        svg.selectAll('path.arc')
+            .data(pieData)
+            .join(
+                enter => enter.append("path"),
+                update => update,
+                exit => exit.remove()
+            )
+            .classed("arc", true)
+            .attr("transform", "translate(" + (this.width / 2) + "," + (this.height / 2) + ")")
+            .attr('fill', (d: any, i: number) => schemeCategory10[i])
+            .transition(t).duration(200).attrTween("d", this.arcTween(this.arc))
+
+        // .attr('d', this.arc);
     }
 }

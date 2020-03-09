@@ -6,9 +6,10 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { max, min } from 'd3-array';
 import { line, curveCatmullRom } from 'd3-shape';
 import { schemeCategory10 } from 'd3-scale-chromatic';
+import { transition } from 'd3-transition';
 // import { timeMonth } from 'd3-time';
 // import { timeFormat } from 'd3-time-format'
-import { tweenDash } from '../../../../utils/d3/animation';
+import { tweenDash ,animationType} from '../../../../utils/d3/animation';
 
 interface D3BpMultiLinesArgs {
     data: any[]
@@ -51,8 +52,8 @@ export default class D3BpMultiLines extends Component<D3BpMultiLinesArgs> {
     @action
     initLine() {
         const dataset = this.args.data
-        const container = select(".bp-multiline")
-        console.log(container)
+        const container = select(".bp-multiline");
+        
         this.width = parseInt(container.style("width"))
         this.height = parseInt(container.style("height"))
         const padding = {
@@ -166,8 +167,10 @@ export default class D3BpMultiLines extends Component<D3BpMultiLinesArgs> {
              .attr('stroke', '#FFAB00');
         */
         // 添加初始动画
+        const t = animationType()
+
         svg.selectAll('.line-path')
-            .transition()
+            .transition(t)
             .duration(4000)
             .attrTween("stroke-dasharray", tweenDash);
 

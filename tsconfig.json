@@ -24,9 +24,11 @@
       "ember-d3-demo/tests/*": [
         "tests/*"
       ],
+      "ember-d3-demo/tests": ["tests"],
       "ember-d3-demo/*": [
         "app/*"
       ],
+      "ember-d3-demo": ["app"],
       "*": [
         "types/*"
       ]

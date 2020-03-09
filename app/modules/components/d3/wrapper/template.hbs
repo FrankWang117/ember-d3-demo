@@ -28,14 +28,16 @@
 				<D3::BpPie class="m-2 {{if (eq this.navTitle "pie") "" "d-none"}}" 
 					@data={{this.pieData}} />
 				<button type="button" class="btn btn-info" {{on 'click' this.changePie}}>changePieData</button>
-				<BsButton @type="info" @onClick={{action "changePieCount"}}>changePieCount</BsButton>
+				<BsButton @type="info" {{on 'click' this.changePieCount}}>changePieCount</BsButton>
 			{{else if (eq this.navTitle "line")}}
 				<D3::BpLine class="m-2 {{if (eq this.navTitle "line") "" "d-none"}}" @data={{@model.barData}} />
 			{{else if (eq this.navTitle "lines")}}
 				<D3::BpMultiLines class="m-2 {{if (eq this.navTitle "lines") "" "d-none"}}" @data={{@model.multiLineData}} />
 			{{else if (eq this.navTitle "map")}}
 				<D3::BpMap class="m-2 {{if (eq this.navTitle "map") "" "d-none"}}" @data={{@model.mapData}} />
-			{{/if}}
+			{{else if (eq this.navTitle 'stack')}}
+                <D3::BpStack @data={{@model.stackData}} />
+            {{/if}}
 
 			{{!-- <D3::HelloWorld class="m-2 {{if (eq this.navTitle "hello") "" "d-none"}}" /> --}}
 			{{!-- <D3::BindData class="m-2 {{if (eq this.navTitle "bind") "" "d-none"}}" /> --}}

@@ -3007,7 +3007,7 @@ broccoli-output-wrapper@^3.1.1:
     heimdalljs-logger "^0.1.10"
     symlink-or-copy "^1.2.0"
 
-broccoli-persistent-filter@^1.1.5, broccoli-persistent-filter@^1.1.6, broccoli-persistent-filter@^1.4.3:
+broccoli-persistent-filter@^1.1.6, broccoli-persistent-filter@^1.4.3:
   version "1.4.6"
   resolved "https://registry.yarnpkg.com/broccoli-persistent-filter/-/broccoli-persistent-filter-1.4.6.tgz#80762d19000880a77da33c34373299c0f6a3e615"
   dependencies:
@@ -3217,13 +3217,6 @@ broccoli-stew@^3.0.0:
     rsvp "^4.8.5"
     symlink-or-copy "^1.2.0"
     walk-sync "^1.1.3"
-
-broccoli-string-replace@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/broccoli-string-replace/-/broccoli-string-replace-0.1.2.tgz#1ed92f85680af8d503023925e754e4e33676b91f"
-  dependencies:
-    broccoli-persistent-filter "^1.1.5"
-    minimatch "^3.0.3"
 
 broccoli-templater@^2.0.1:
   version "2.0.2"
@@ -3475,10 +3468,6 @@ callsites@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/callsites/-/callsites-3.1.0.tgz#b3630abd8943432f54b3f0519238e33cd7df2f73"
 
-camelcase@^5.0.0:
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
-
 can-symlink@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/can-symlink/-/can-symlink-1.0.0.tgz#97b607d8a84bb6c6e228b902d864ecb594b9d219"
@@ -3660,14 +3649,6 @@ cli-table@^0.3.1:
 cli-width@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
-
-cliui@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/cliui/-/cliui-5.0.0.tgz#deefcfdb2e800784aa34f46fa08e06851c7bbbc5"
-  dependencies:
-    string-width "^3.1.0"
-    strip-ansi "^5.2.0"
-    wrap-ansi "^5.1.0"
 
 clone-response@1.0.2:
   version "1.0.2"
@@ -4268,10 +4249,6 @@ debug@~3.1.0:
   dependencies:
     ms "2.0.0"
 
-decamelize@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
-
 decode-uri-component@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
@@ -4632,15 +4609,6 @@ ember-cli-htmlbars-inline-precompile@^2.1.0:
     heimdalljs-logger "^0.1.9"
     silent-error "^1.1.0"
 
-ember-cli-htmlbars@^2.0.3:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/ember-cli-htmlbars/-/ember-cli-htmlbars-2.0.5.tgz#b5a105429a6bce4f7c9c97b667e3b8926e31397f"
-  dependencies:
-    broccoli-persistent-filter "^1.4.3"
-    hash-for-dep "^1.2.3"
-    json-stable-stringify "^1.0.0"
-    strip-bom "^3.0.0"
-
 ember-cli-htmlbars@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/ember-cli-htmlbars/-/ember-cli-htmlbars-3.1.0.tgz#87806c2a0bca2ab52d4fb8af8e2215c1ca718a99"
@@ -4668,10 +4636,6 @@ ember-cli-htmlbars@^4.0.5, ember-cli-htmlbars@^4.2.2:
     semver "^6.3.0"
     strip-bom "^4.0.0"
     walk-sync "^2.0.2"
-
-ember-cli-import-polyfill@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/ember-cli-import-polyfill/-/ember-cli-import-polyfill-0.2.0.tgz#c1a08a8affb45c97b675926272fe78cf4ca166f2"
 
 ember-cli-inject-live-reload@^2.0.2:
   version "2.0.2"
@@ -4726,22 +4690,6 @@ ember-cli-sass@^10.0.1:
     broccoli-merge-trees "^3.0.1"
     broccoli-sass-source-maps "^4.0.0"
     ember-cli-version-checker "^2.1.0"
-
-ember-cli-showdown@^4.4.4:
-  version "4.4.4"
-  resolved "https://registry.yarnpkg.com/ember-cli-showdown/-/ember-cli-showdown-4.4.4.tgz#daf666369b1f35843dc5dc55a94da058e63f59c4"
-  dependencies:
-    broccoli-funnel "^2.0.0"
-    broccoli-source "^1.1.0"
-    broccoli-string-replace "^0.1.2"
-    ember-cli-babel "^6.8.1"
-    ember-cli-htmlbars "^2.0.3"
-    ember-cli-import-polyfill "^0.2.0"
-    ember-cli-version-checker "^2.1.2"
-    ember-getowner-polyfill "^2.0.1"
-    resolve "^1.8.1"
-    semver "^5.5.0"
-    showdown "^1.7.4"
 
 ember-cli-sri@^2.1.1:
   version "2.1.1"
@@ -5049,12 +4997,6 @@ ember-export-application-global@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/ember-export-application-global/-/ember-export-application-global-2.0.1.tgz#b120a70e322ab208defc9e2daebe8d0dfc2dcd46"
 
-ember-factory-for-polyfill@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/ember-factory-for-polyfill/-/ember-factory-for-polyfill-1.3.1.tgz#b446ed64916d293c847a4955240eb2c993b86eae"
-  dependencies:
-    ember-cli-version-checker "^2.1.0"
-
 ember-fetch@^7.0.0:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/ember-fetch/-/ember-fetch-7.0.1.tgz#062b87bdc440135c8cd87ce4678cfc8da25d5116"
@@ -5081,13 +5023,6 @@ ember-focus-trap@^0.3.2:
     ember-cli-babel "^7.11.0"
     ember-modifier-manager-polyfill "^1.1.0"
     focus-trap "^5.0.1"
-
-ember-getowner-polyfill@^2.0.1:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/ember-getowner-polyfill/-/ember-getowner-polyfill-2.2.0.tgz#38e7dccbcac69d5ec694000329ec0b2be651d2b2"
-  dependencies:
-    ember-cli-version-checker "^2.1.0"
-    ember-factory-for-polyfill "^1.3.1"
 
 ember-inflector@^3.0.1:
   version "3.0.1"
@@ -6152,7 +6087,7 @@ gensync@^1.0.0-beta.1:
   version "1.0.0-beta.1"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.1.tgz#58f4361ff987e5ff6e1e7a210827aa371eaac269"
 
-get-caller-file@^2.0.1, get-caller-file@^2.0.5:
+get-caller-file@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-2.0.5.tgz#4f94412a82db32f36e3b0b9741f8a97feb031f7e"
 
@@ -7616,7 +7551,7 @@ minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-crypto-utils/-/minimalistic-crypto-utils-1.0.1.tgz#f6c00c1c0b082246e5c4d99dfb8c7c083b2b582a"
 
-"minimatch@2 || 3", minimatch@3.0.4, minimatch@^3.0.0, minimatch@^3.0.2, minimatch@^3.0.3, minimatch@^3.0.4:
+"minimatch@2 || 3", minimatch@3.0.4, minimatch@^3.0.0, minimatch@^3.0.2, minimatch@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.4.tgz#5166e286457f03306064be5497e8dbb0c3d32083"
   dependencies:
@@ -8731,14 +8666,6 @@ request@^2.88.0:
     tunnel-agent "^0.6.0"
     uuid "^3.3.2"
 
-require-directory@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
-
-require-main-filename@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-2.0.0.tgz#d0b329ecc7cc0f61649f62215be69af54aa8989b"
-
 require-relative@^0.8.7:
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/require-relative/-/require-relative-0.8.7.tgz#7999539fc9e047a37928fa196f8e1563dabd36de"
@@ -9030,7 +8957,7 @@ serve-static@1.14.1:
     parseurl "~1.3.3"
     send "0.17.1"
 
-set-blocking@^2.0.0, set-blocking@~2.0.0:
+set-blocking@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
 
@@ -9085,12 +9012,6 @@ shebang-regex@^3.0.0:
 shellwords@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
-
-showdown@^1.7.4:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/showdown/-/showdown-1.9.1.tgz#134e148e75cd4623e09c21b0511977d79b5ad0ef"
-  dependencies:
-    yargs "^14.2"
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
@@ -9413,7 +9334,7 @@ string-width@^1.0.1:
     is-fullwidth-code-point "^2.0.0"
     strip-ansi "^4.0.0"
 
-string-width@^3.0.0, string-width@^3.1.0:
+string-width@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-3.1.0.tgz#22767be21b62af1081574306f69ac51b62203961"
   dependencies:
@@ -9471,7 +9392,7 @@ strip-ansi@^4.0.0:
   dependencies:
     ansi-regex "^3.0.0"
 
-strip-ansi@^5.0.0, strip-ansi@^5.1.0, strip-ansi@^5.2.0:
+strip-ansi@^5.1.0, strip-ansi@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-5.2.0.tgz#8c9a536feb6afc962bdfa5b104a5091c1ad9c0ae"
   dependencies:
@@ -10178,10 +10099,6 @@ whatwg-url@^7.0.0:
     tr46 "^1.0.1"
     webidl-conversions "^4.0.2"
 
-which-module@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"
-
 which@^1.2.14, which@^1.2.9, which@^1.3.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/which/-/which-1.3.1.tgz#a45043d54f5805316da8d62f9f50918d3da70b0a"
@@ -10231,14 +10148,6 @@ workerpool@^3.1.1:
 workerpool@^5.0.1:
   version "5.0.4"
   resolved "https://registry.yarnpkg.com/workerpool/-/workerpool-5.0.4.tgz#4f67cb70ff7550a27ab94de25b0b843cd92059a2"
-
-wrap-ansi@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-5.1.0.tgz#1fd1f67235d5b6d0fee781056001bfb694c03b09"
-  dependencies:
-    ansi-styles "^3.2.0"
-    string-width "^3.0.0"
-    strip-ansi "^5.0.0"
 
 wrappy@1:
   version "1.0.2"
@@ -10313,29 +10222,6 @@ yam@^1.0.0:
   dependencies:
     fs-extra "^4.0.2"
     lodash.merge "^4.6.0"
-
-yargs-parser@^15.0.0:
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-15.0.0.tgz#cdd7a97490ec836195f59f3f4dbe5ea9e8f75f08"
-  dependencies:
-    camelcase "^5.0.0"
-    decamelize "^1.2.0"
-
-yargs@^14.2:
-  version "14.2.2"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-14.2.2.tgz#2769564379009ff8597cdd38fba09da9b493c4b5"
-  dependencies:
-    cliui "^5.0.0"
-    decamelize "^1.2.0"
-    find-up "^3.0.0"
-    get-caller-file "^2.0.1"
-    require-directory "^2.1.1"
-    require-main-filename "^2.0.0"
-    set-blocking "^2.0.0"
-    string-width "^3.0.0"
-    which-module "^2.0.0"
-    y18n "^4.0.0"
-    yargs-parser "^15.0.0"
 
 yeast@0.1.2:
   version "0.1.2"

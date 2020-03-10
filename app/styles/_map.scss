@@ -1,0 +1,16 @@
+.bp-map {
+    position: relative;
+}
+.map-tooltip {
+    width: 200px;
+    position: absolute;
+    pointer-events: none;
+    border-radius: 4px;
+    color: white;
+    background-color: rgba(9,30,66,.5);
+    padding: 12px 8px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+}

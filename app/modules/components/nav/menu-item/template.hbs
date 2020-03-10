@@ -1,4 +1,5 @@
-<li class="nav-item" {{on 'click' (fn this.changeActiveNav @menu.identify)}}>
+<li class="nav-item" {{on "click" (fn this.changeActiveNav @menu.identify)}}>
 	<a class="nav-link {{if (eq @activeNav @menu.identify) "active"}}">
-		{{@menu.name}}</a>
+		{{@menu.name}}
+	</a>
 </li>

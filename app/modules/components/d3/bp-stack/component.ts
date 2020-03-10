@@ -8,11 +8,18 @@ import { timeMonth } from 'd3-time';
 import { timeFormat } from 'd3-time-format';
 import { stack, stackOrderNone, stackOffsetNone } from 'd3-shape';
 import { getYAxisWidth } from 'ember-d3-demo/utils/d3/yAxisWidth';
-import { schemePaired} from 'd3-scale-chromatic'
-import { select } from 'd3-selection';
+import { schemePaired} from 'd3-scale-chromatic';
 
 interface D3BpStackArgs {
     data: any[];
+    /** 数据格式
+     * [
+        {month: new Date(2015, 0, 1), apples: 3840, bananas: 1920, cherries: 960, dates: 400},
+        {month: new Date(2015, 1, 1), apples: 1600, bananas: 1440, cherries: 960, dates: 400},
+        {month: new Date(2015, 2, 1), apples:  640, bananas:  960, cherries: 640, dates: 400},
+        {month: new Date(2015, 3, 1), apples:  320, bananas:  480, cherries: 640, dates: 400}
+      ]
+     */
     width: number;
     height: number;
 }

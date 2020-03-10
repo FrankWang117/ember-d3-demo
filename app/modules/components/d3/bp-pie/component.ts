@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { pie, arc } from 'd3-shape';
+import { pie, arc, Arc, DefaultArcObject } from 'd3-shape';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import { animationType } from '../../../../utils/d3/animation';
 import { interpolate } from 'd3-interpolate';
@@ -30,12 +30,17 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
     private container: Selection<BaseType, unknown, HTMLElement, null>// svg 容器
     width: number = 0 // svg width
     height: number = 0 // svg height
-    arc: any = null
+    arc: Arc<any, DefaultArcObject> = arc()
+        .innerRadius(this.innerRadius)
+        .outerRadius(this.outerRadius);
+    arcOver: Arc<any, DefaultArcObject> = arc()
+        .innerRadius(this.innerRadius)
+        .outerRadius(this.outerRadius + (this.outerRadius - this.innerRadius));
     private arcTween(arc: any) {
         return function (a: any) {
             const i = interpolate(this._current, a);
             this._current = i(1);
-            return (t:any) => arc(i(t));
+            return (t: any) => arc(i(t));
         }
     }
     get layoutData() {
@@ -74,25 +79,14 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
         this.width = layout.getWidth()
         this.height = layout.getHeight()
         this.container = container
-
-        const { innerRadius, outerRadius } = this
         // 生成 svg
         let svg = container.append('svg')
             .attr("width", width)
             .attr("height", height)
 
         const pieData = this.layoutData
-        // 基础 rect 设置
-        let arcins = arc()
-            .innerRadius(innerRadius)
-            .outerRadius(outerRadius);
-
-        this.arc = arcins;
-
-        // hover 状态 rect 的设置
-        let arcOver = arc()
-            .innerRadius(innerRadius)
-            .outerRadius(outerRadius + 15);
+        // 基础 rect 设置 / hover 状态 rect 的设置
+        const { arc: arcins, arcOver } = this;
 
         svg.selectAll('path.arc')
             .data(pieData)
@@ -119,12 +113,13 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
                     .attr('d', arcins)
             })
     }
-
     @action
     updatePie() {
         const pieData = this.layoutData
         const svg = select('.bp-pie svg');
-        const t: any = animationType()
+        const t: any = animationType();
+        let { arc: arcins, arcOver } = this;
+
         svg.selectAll('path.arc')
             .data(pieData)
             .join(
@@ -135,7 +130,20 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
             .classed("arc", true)
             .attr("transform", "translate(" + (this.width / 2) + "," + (this.height / 2) + ")")
             .attr('fill', (d: any, i: number) => schemeCategory10[i])
-            .transition(t).duration(200).attrTween("d", this.arcTween(this.arc))
+            .transition(t).duration(200).attrTween("d", this.arcTween(arcins));
+
+        svg.selectAll('path.arc').on('mouseover', function () {
+            select(this)
+                .transition(t)
+                .duration(1000)
+                .attr('d', arcOver)
+        })
+            .on('mouseout', function () {
+                select(this)
+                    .transition(t)
+                    .duration(100)
+                    .attr('d', arcins)
+            })
 
         // .attr('d', this.arc);
     }

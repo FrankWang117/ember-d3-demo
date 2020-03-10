@@ -12,9 +12,9 @@
 
 以上三点转过来以后，基本算理解d3背后的思路了，大约看文档也可以独立写点东西出来了。d3的使用模式如下：
 
-	- step1：准备数据
-	- step2：创建dom
-	- step3：设置属性
+    - step1：准备数据
+    - step2：创建dom
+    - step3：设置属性
 
 作者：ciga2011 ， [来源](https://www.zhihu.com/question/22171866/answer/22512521)
 ## 1. 前期工作
@@ -565,25 +565,25 @@ transition 等动画在 d3 中添加是很容易的，和 css3 中的动画大�
 /**
  * 添加柱状图
  */
-	// svg.selectAll('rect')
-	//     .data(DATASET)
-	//     .enter()
-	//     .append('rect')
-	//     .classed('bp-bar-rect', true)
-	//     .attr("transform", `translate(${padding.left},${ padding.top})`)
-	//     .attr('x', (d) => {
-	//         return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
-	//     })
-	//     .attr('y', (d) => yScale(d[1]))
-	//     .attr('width', barWidth + "px")
-	//     .attr('height', (d) => height - padding.top - padding.bottom - yScale(d[1]))
-	//     .text((d: any) => d[4]);
+    // svg.selectAll('rect')
+    //     .data(DATASET)
+    //     .enter()
+    //     .append('rect')
+    //     .classed('bp-bar-rect', true)
+    //     .attr("transform", `translate(${padding.left},${ padding.top})`)
+    //     .attr('x', (d) => {
+    //         return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
+    //     })
+    //     .attr('y', (d) => yScale(d[1]))
+    //     .attr('width', barWidth + "px")
+    //     .attr('height', (d) => height - padding.top - padding.bottom - yScale(d[1]))
+    //     .text((d: any) => d[4]);
 
 /**
  * 为柱状图添加动画
  */
 const t = transition()
-	.ease();
+    .ease();
 
 svg.selectAll('rect')
     .data(DATASET)
@@ -592,8 +592,8 @@ svg.selectAll('rect')
     .classed('bp-bar-rect', true)
     .attr("transform", `translate(${padding.left},${padding.top})`)
     .attr('x', (d) => {
-    	return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
-	})
+        return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
+    })
     .attr('y', height - padding.bottom-24) // 24 为x坐标轴的高度
     .attr('width', barWidth + "px")
     .attr('height',0)
@@ -612,8 +612,8 @@ svg.selectAll('rect')
 ``` ts
 svg.selectAll('rect')
     .on('mouseover', function (d, i: number) {
-    	// 保证修改的元素的 fill 不是在 class 中
-    	// 而是通过 attr('fill',value) 定义的
+        // 保证修改的元素的 fill 不是在 class 中
+        // 而是通过 attr('fill',value) 定义的
         select(this).attr("fill", "#FFC400")
     })
     .on('mouseout', function (d, i) {
@@ -754,40 +754,40 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
 
 ``` json
 [{
-	"data": ["癫痫竞品1", 2575385.5, null, "0.1952"],
-	"index": 0,
-	"value": 2575385.5,
-	"startAngle": 0,
-	"endAngle": 1.2261668298428863,
-	"padAngle": 0
+    "data": ["癫痫竞品1", 2575385.5, null, "0.1952"],
+    "index": 0,
+    "value": 2575385.5,
+    "startAngle": 0,
+    "endAngle": 1.2261668298428863,
+    "padAngle": 0
 }, {
-	"data": ["开浦兰", 679346.1875, null, "0.0515"],
-	"index": 1,
-	"value": 679346.1875,
-	"startAngle": 1.2261668298428863,
-	"endAngle": 1.5496103535766053,
-	"padAngle": 0
+    "data": ["开浦兰", 679346.1875, null, "0.0515"],
+    "index": 1,
+    "value": 679346.1875,
+    "startAngle": 1.2261668298428863,
+    "endAngle": 1.5496103535766053,
+    "padAngle": 0
 }, {
-	"data": ["癫痫竞品2", 279866.65625, null, "0.0212"],
-	"index": 2,
-	"value": 279866.65625,
-	"startAngle": 1.5496103535766053,
-	"endAngle": 1.6828576715695005,
-	"padAngle": 0
+    "data": ["癫痫竞品2", 279866.65625, null, "0.0212"],
+    "index": 2,
+    "value": 279866.65625,
+    "startAngle": 1.5496103535766053,
+    "endAngle": 1.6828576715695005,
+    "padAngle": 0
 }, {
-	"data": ["维派特", 0, null, "0.0000"],
-	"index": 3,
-	"value": 0,
-	"startAngle": 1.6828576715695005,
-	"endAngle": 1.6828576715695005,
-	"padAngle": 0
+    "data": ["维派特", 0, null, "0.0000"],
+    "index": 3,
+    "value": 0,
+    "startAngle": 1.6828576715695005,
+    "endAngle": 1.6828576715695005,
+    "padAngle": 0
 }, {
-	"data": ["其他竞品", 9662320.65625, null, "0.7322"],
-	"index": 4,
-	"value": 9662320.65625,
-	"startAngle": 1.6828576715695005,
-	"endAngle": 6.283185307179586,
-	"padAngle": 0
+    "data": ["其他竞品", 9662320.65625, null, "0.7322"],
+    "index": 4,
+    "value": 9662320.65625,
+    "startAngle": 1.6828576715695005,
+    "endAngle": 6.283185307179586,
+    "padAngle": 0
 }]
 ```
 
@@ -911,7 +911,7 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
             // 上述链接展示参数的不同，线条会有怎样的变化
             .curve(curveCatmullRom.alpha(0.5))
 
-		// 单折线的数据展示方式-1
+        // 单折线的数据展示方式-1
         /**
          svg.append('g')
              .append('path')
@@ -992,10 +992,10 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
 // 。。。 
 // 单折线的数据展示方式-1
 /**
-	svg.append('g')
-		.append('path')
-		.classed('line-path', true)
-		.attr('transform', `translate(${yAxisWidth+xScale.bandwidth()/2},${padding.top})`)
+    svg.append('g')
+        .append('path')
+        .classed('line-path', true)
+        .attr('transform', `translate(${yAxisWidth+xScale.bandwidth()/2},${padding.top})`)
              .attr('d', lineLayout(dataset))
              .attr('fill', 'none')
              .attr('stroke-width', 2)
@@ -1252,7 +1252,7 @@ json('../json/chinawithoutsouthsea.json')
                     })
                 
                     const t = animationType();
-  									// animationType = function() {
+                                      // animationType = function() {
                     //       return d3.transtion().ease()
                     // }
 
@@ -1529,5 +1529,279 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
     }
 }
 
+```
+
+## 8. 柱状堆积图
+
+### 8.1 效果图
+
+![2020-03-10-截屏2020-03-1020.32.29-G236YJ](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-10-截屏2020-03-1020.32.29-G236YJ.png) 
+
+可以看到每组数据都进行了叠加。  
+
+现在来看一下具体实现：  
+
+### 8.2 实现
+
+堆叠图虽然和柱状图在展示上相差不是很多，但是在实现上差距还是有的。简单的柱状图是使用 svg 中的 rect 元素，根据数据，赋予 rect 相应的宽高来展示数据的差异。但是堆叠图是使用多个 rect 堆叠起，其中的 rect 关系我们是需要计算的。还好在 D3.js 中提供了相关的 API： d3.shape 中的 [d3.stack](https://github.com/d3/d3-shape/blob/v1.3.7/README.md#stacks) ，对数据进行处理。   
+
+本次示例中也是使用的官方示例数据。  
+
+#### 8.2.1 坐标轴
+
+坐标轴的生成在之前的文章中也提到不少，这里为了尝试更多的 scale ，使用了在本例中不太合适的 scaleTime 比例尺。  
+
+**注意** 比例尺的选择要根据展示的图的 nature 来选择合适的比例尺，不能只是淡淡因为 x 轴 lable 的数据是什么类型就选择什么类型的比例尺。  
+
+看到这里，应该发现我们的展示图上有一些问题：柱状图并不是居中在坐标的 ticks 中，而是有一个 1/2 bandWidth 的偏移。这也是 scaleTime 的原因。  
+
+上代码
+
+``` javascript
+/** 数据格式
+     * [
+        {month: new Date(2015, 0, 1), apples: 3840, bananas: 1920, cherries: 960, dates: 400},
+        {month: new Date(2015, 1, 1), apples: 1600, bananas: 1440, cherries: 960, dates: 400},
+        {month: new Date(2015, 2, 1), apples:  640, bananas:  960, cherries: 640, dates: 400},
+        {month: new Date(2015, 3, 1), apples:  320, bananas:  480, cherries: 640, dates: 400}
+      ]
+     */
+// ...
+const timeDate = data.map(datum => datum.month)
+// y 轴 scale
+const yScale = scaleLinear()
+	.domain([0, max(series, d => max(d, d => d[1]))])
+	.range([this.height - padding.pt - padding.pb, 0]);
+
+const yAxis = axisLeft(yScale)
+
+svg.append('g')
+    .classed("y-axis", true)
+    .call(yAxis);
+
+// y轴宽度
+const yAxisWidth: number = getYAxisWidth(svg.select('.y-axis'))
+svg.select(".y-axis")
+    .attr("transform", `translate(${padding.pl + yAxisWidth},${padding.pt})`);
+
+// 为了给两端留出空白区域
+const phMinDate = timeMonth.offset(min(timeDate),-1);
+const phMaxDate = timeMonth.offset(max(timeDate),1);
+
+// x轴scale
+const xScale = scaleTime()
+.domain([min(timeDate),max(timeDate)])
+.range([padding.pl, this.width - padding.pr - yAxisWidth]);
+
+// x轴
+const xAxis = axisBottom(xScale)
+.ticks(timeMonth.every(1))
+.tickFormat(timeFormat('%y-%m'))
+
+svg.append('g')
+    .classed("x-axis", true)
+    .attr("transform", `translate(${yAxisWidth},${this.height - padding.pb})`)
+    .call(xAxis)
+// ...
+```
+
+其中使用的 utils 函数 - `getYAxisWidth` 在 [项目](https://github.com/FrankWang1991/ember-d3-demo/blob/master/app/utils/d3/yAxisWidth.ts) 可查看。
+
+这个示例展示了 scaleTime 的用法以及对时间的进一步格式化：
+
+```javascript
+// x轴
+const xAxis = axisBottom(xScale)
+.ticks(timeMonth.every(1))
+.tickFormat(timeFormat('%y-%m'))
+```
+
+当 `timeMonth.every` 的参数值为 3 的时候，我们就可以得到按季度分隔的时间轴了。
+
+这时我们可以看到：
+
+![坐标轴](https://raw.githubusercontent.com/FrankWang1991/images/master/2020-03-10-截屏2020-03-1020.56.49-CdQhwS.png)
+
+两个坐标轴已然准备就绪。  
+
+#### 8.2.2 数据展示
+
+要展示 stack 数据，需要对原始数据进行预处理。D3.js 提供 `d3.stack` 处理函数：
+
+```javascript
+const stackIns = stack()
+    .keys(Object.keys(data[0]).slice(1))
+    .order(stackOrderNone)
+    .offset(stackOffsetNone);
+
+const series = stackIns(data);
+```
+
+现在，我们得到的 series 即时我们要绘制的堆叠图的能够识别的数据：
+
+``` javascript
+svg.selectAll('g.stack')
+    .data(series)
+    .join(
+        enter => enter.append('g'),
+        update => update,
+        exit => exit.remove()
+	)
+    .classed('stack', true)
+    .attr('fill', (d:any,i:number)=>schemePaired[i])
+    .attr('transform',`translate(${yAxisWidth},${padding.pt})`)
+    .selectAll('rect')
+    .data(d => d)
+    .join(
+    enter => enter.append('rect'),
+    update => update,
+    exit => exit.remove()
+)
+    .attr('x', (d: any) => xScale(d.data.month))
+    .attr('y', (d: any) => yScale(d[1]))
+    .attr('height', (d: any) => yScale(d[0]) - yScale(d[1]))
+    .attr('width', 14)
+```
+
+
+
+这样像图 8.1 的效果就出来了。现在来看一下完整的代码：
+
+``` javascript
+// bp-stack.ts
+
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import Layout from 'ember-d3-demo/utils/d3/layout';
+import { scaleTime, scaleLinear } from 'd3-scale';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { min, max } from 'd3-array';
+import { timeMonth } from 'd3-time';
+import { timeFormat } from 'd3-time-format';
+import { stack, stackOrderNone, stackOffsetNone } from 'd3-shape';
+import { getYAxisWidth } from 'ember-d3-demo/utils/d3/yAxisWidth';
+import { schemePaired} from 'd3-scale-chromatic';
+
+interface D3BpStackArgs {
+    data: any[];
+    /** 数据格式
+     * [
+        {month: new Date(2015, 0, 1), apples: 3840, bananas: 1920, cherries: 960, dates: 400},
+        {month: new Date(2015, 1, 1), apples: 1600, bananas: 1440, cherries: 960, dates: 400},
+        {month: new Date(2015, 2, 1), apples:  640, bananas:  960, cherries: 640, dates: 400},
+        {month: new Date(2015, 3, 1), apples:  320, bananas:  480, cherries: 640, dates: 400}
+      ]
+     */
+    width: number;
+    height: number;
+}
+
+export default class D3BpStack extends Component<D3BpStackArgs> {
+    constainer: any = null
+    width: number = this.args.width
+    height: number = this.args.height
+
+    @action
+    initChart() {
+        const data = this.args.data
+        let layout = new Layout('.bp-stack')
+
+        let { width, height } = this
+
+        if (width) {
+            layout.setWidth(width)
+        } else {
+            width = layout.getWidth()
+        }
+        if (height) {
+            layout.setHeight(height)
+        } else {
+            height = layout.getHeight()
+        }
+        const container = layout.getContainer()
+        this.width = layout.getWidth()
+        this.height = layout.getHeight()
+        this.constainer = container
+        const padding = layout.getPadding()
+
+        // 生成 svg
+        let svg = container.append('svg')
+            .attr("width", width)
+            .attr("height", height);
+
+        const stackIns = stack()
+            .keys(Object.keys(data[0]).slice(1))
+            .order(stackOrderNone)
+            .offset(stackOffsetNone);
+
+        const series = stackIns(data);
+
+        const timeDate = data.map(datum => datum.month)
+
+        // y 轴 scale
+        const yScale = scaleLinear()
+            .domain([0, max(series, d => max(d, d => d[1]))])
+            .range([this.height - padding.pt - padding.pb, 0]);
+
+        const yAxis = axisLeft(yScale)
+
+        svg.append('g')
+            .classed("y-axis", true)
+            .call(yAxis);
+
+        // y轴宽度
+        const yAxisWidth: number = getYAxisWidth(svg.select('.y-axis'))
+        svg.select(".y-axis")
+            .attr("transform", `translate(${padding.pl + yAxisWidth},${padding.pt})`);
+        
+        // 为了给两端留出空白区域
+        const phMinDate = timeMonth.offset(min(timeDate),-1);
+        const phMaxDate = timeMonth.offset(max(timeDate),1);
+
+        // x轴scale
+        const xScale = scaleTime()
+            .domain([min(timeDate),max(timeDate)])
+            .range([padding.pl, this.width - padding.pr - yAxisWidth]);
+
+        // x轴
+        const xAxis = axisBottom(xScale)
+            .ticks(timeMonth.every(1))
+            .tickFormat(timeFormat('%y-%m'))
+
+        svg.append('g')
+            .classed("x-axis", true)
+            .attr("transform", `translate(${yAxisWidth},${this.height - padding.pb})`)
+            .call(xAxis)
+
+        svg.selectAll('g.stack')
+            .data(series)
+            .join(
+                enter => enter.append('g'),
+                update => update,
+                exit => exit.remove()
+            )
+            .classed('stack', true)
+            .attr('fill', (d:any,i:number)=>schemePaired[i])
+            .attr('transform',`translate(${yAxisWidth},${padding.pt})`)
+            .selectAll('rect')
+            .data(d => d)
+            .join(
+                enter => enter.append('rect'),
+                update => update,
+                exit => exit.remove()
+            )
+            .attr('x', (d: any) => xScale(d.data.month))
+            .attr('y', (d: any) => yScale(d[1]))
+            .attr('height', (d: any) => yScale(d[0]) - yScale(d[1]))
+            .attr('width', 14)
+
+    }
+}
+
+```
+
+```handlebars
+{{!-- bp-stack.hbs --}}
+<div class="bp-stack" {{did-insert this.initChart}}></div>
 ```
 

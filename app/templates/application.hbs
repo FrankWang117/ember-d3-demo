@@ -14,7 +14,10 @@
 					<nav.item>
 						<nav.link-to @route="d3">D3</nav.link-to>
 					</nav.item>
-					<nav.dropdown as |dd|>
+					<nav.item>
+						<nav.link-to @route="d3">图表展示(undo)</nav.link-to>
+					</nav.item>
+					{{!-- <nav.dropdown as |dd|>
 						<dd.toggle>图表展示 <span class="caret"></span></dd.toggle>
 						<dd.menu as |ddm|>
 							<ddm.item>
@@ -27,7 +30,7 @@
 								<ddm.link-to @route="d3">Pie</ddm.link-to>
 							</ddm.item>
 						</dd.menu>
-					</nav.dropdown>
+					</nav.dropdown> --}}
 				</navbar.nav>
 			</navbar.content>
 		</BsNavbar>

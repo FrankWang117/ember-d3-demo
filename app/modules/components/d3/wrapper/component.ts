@@ -2,7 +2,8 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 interface D3WrapperArgs {
-	model: any
+	model: any;
+	params: any;
 }
 
 export default class D3Wrapper extends Component<D3WrapperArgs> {
@@ -14,7 +15,8 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 		{ name: "Layout&Pie", identify: "pie", comp: "d3/bp-pie" },
 		{ name: "Line Demo", identify: "line", comp: "d3/bp-line" },
 		{ name: "Lines Demo", identify: "lines", comp: "d3/bp-multi-lines" },
-		{ name: "China Map", identify: "map", comp: "d3/bp-map" }
+		{ name: "China Map", identify: "map", comp: "d3/bp-map" },
+		{ name: "Stack", identify: "stack", comp: "d3/bp-stack" }
 	]
 	@tracked pieData: any[] = this.args.model.pieData
 	@tracked navTitle: string = "hello"
@@ -27,7 +29,6 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 	}
 	@action
 	changePie() {
-		console.log("changePie")
 		let random = () => Math.random() * 100
 		this.pieData = [
 			["癫痫竞品1", random(), null, "0.1952"],
@@ -42,8 +43,8 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 		let len = () => Math.random() * 10 + 3
 		let random = () => Math.random() * 100
 		let data = []
-		for(let i = 0,l = len();i<l;i++) {
-			data.push(["癫痫竞品"+i, random(), null, "0.1952"])
+		for (let i = 0, l = len(); i < l; i++) {
+			data.push(["癫痫竞品" + i, random(), null, "0.1952"])
 		}
 		this.pieData = data
 	}

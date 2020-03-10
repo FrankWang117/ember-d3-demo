@@ -5,12 +5,15 @@ import { scaleLinear } from 'd3-scale'
 import Layout from 'ember-d3-demo/utils/d3/layout';
 import { geoPath, geoMercator } from 'd3-geo';
 import { max, min } from 'd3-array';
-import { select } from 'd3-selection';
+import { select, mouse, clientPoint, event, selectAll } from 'd3-selection';
 import { format } from 'd3-format';
-import {animationType} from '../../../../utils/d3/animation';
+import { animationType } from '../../../../utils/d3/animation';
+import { iTooltip } from '../../../../utils/interface/tooltip';
+import D3Tooltip from "ember-d3-demo/utils/d3/tooltip";
 
 interface D3BpMapArgs {
-    data: any[]
+    data: any[];
+    tooltip: iTooltip;
     // [
     //     ["广东", 1, 73016024],
     //     ["河南", 1, 60152736],
@@ -21,6 +24,7 @@ interface D3BpMapArgs {
 }
 
 export default class D3BpMap extends Component<D3BpMapArgs> {
+    private tp: iTooltip = this.args.tooltip
     @action
     initMap() {
         let layout = new Layout('.bp-map')
@@ -32,7 +36,7 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
             layout.setHeight(height)
         }
         const container = layout.getContainer()
-
+        const tooltipIns = new D3Tooltip(container,'map-tooltip')
         //generate svg
         const svg = container.append('svg')
             .attr('width', layout.getWidth())
@@ -65,9 +69,9 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
             let southSeaH = southSea.node().getBBox().height / 5
             select("#southsea")
                 .classed("southsea", true)
-                .attr("transform", `translate(${layout.getWidth()-southSeaWidth-24},${layout.getHeight()-southSeaH-24}) scale(0.2)`)
+                .attr("transform", `translate(${layout.getWidth() - southSeaWidth - 24},${layout.getHeight() - southSeaH - 24}) scale(0.2)`)
                 .attr("")
-             return json('../json/chinawithoutsouthsea.json')
+            return json('../json/chinawithoutsouthsea.json')
         })
             .then(geoJson => {
                 const projection = geoMercator()
@@ -79,21 +83,52 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
                     .data(geoJson.features)
                     .enter()
                     .append("path")
-                    .classed("map",true)
+                    .classed("map", true)
                     .attr("fill", "#fafbfc")
                     .attr("stroke", "white")
                     .attr("class", "continent")
                     .attr("d", path)
                     .on('mouseover', function (d: any) {
-                        select(this)
-                            .classed('path-active', true)
+                        const curSelect = select(this);
+                        console.log(d)
+                        curSelect.classed('path-active', true);
+
+                        let p = clientPoint(this, event)
+                        let prov = d.properties.name;
+                        let curProvData: any[] = data.find((provData: any) => provData[0] === prov.slice(0, 2))
+                        console.log(curProvData);
+                        tooltipIns.setCurData(curProvData);
+                        tooltipIns.setPosition(p)
+                        tooltipIns.getTooltip()
+                        .classed("d-none", false);
+                        tooltipIns.setContent(function(data:any){
+                            console.log(data)
+                            return  `<p>HelloWorld${data[0]}</p>`
+                        })
+                        // container.select('.map-tooltip')
+                        //     .classed("d-none", false)
+                        //     .style("left", `${p[0]}px`)
+                        //     .style("top", `${p[1]}px`)
+                        //     .html("<h3>hello world</h3>")
+                            // .append('p')
+                            // .classed("title", true)
+                            // .text(`${prov} 市场概况`)
+                            // .append('p')
+                            // .text(`市场规模 ${curProvData ? curProvData[2] : '无数据'}`)
+                            // .append('p')
+                            // .text(`EI ${curProvData ? curProvData[1] : ''}`)
                     })
                     .on('mouseout', function (d: any) {
                         select(this)
-                            .classed('path-active', false)
+                            .classed('path-active', false);
+
+                        // container.select('.map-tooltip')
+                        //     .classed("d-none", true)
+                        // selectAll('p')
+                        //     .remove()
                     })
-                
-                    const t = animationType();
+
+                const t = animationType();
 
                 paths.transition(t)
                     .duration(1000)
@@ -103,7 +138,7 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
 
                         return color(curProvData ? curProvData[2] : 0)
                     });
-            //     return xml("../json/southchinasea.svg")
+                //     return xml("../json/southchinasea.svg")
             });
         // 显示渐变矩形条
         const linearGradient = svg.append("defs")

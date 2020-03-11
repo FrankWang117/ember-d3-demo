@@ -45,9 +45,8 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
     }
     @action
     initScale() {
-
         let linear = scaleLinear()
-            .domain([0, max(dataset, null)])
+            .domain([0, <number>max(dataset)])
             .range([0, 250]);
 
         const barContainer = select(".scale");
@@ -58,7 +57,7 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
             .selectAll("rect")
             .data(dataset)
             .attr("x", 20)
-            .attr("y", function (d, i) {
+            .attr("y", function (_d, i) {
                 return i * RECTHEIGHT
             })
             .attr("width", function (d) {

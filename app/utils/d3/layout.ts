@@ -11,6 +11,7 @@ class Layout {
     private width: number 
     private height: number
     private container: Selection<BaseType,unknown,HTMLElement,null> 
+    
     constructor(querySelectorValue:string) {
         let container = select(querySelectorValue)
         this.container = container

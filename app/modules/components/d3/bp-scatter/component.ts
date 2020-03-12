@@ -4,7 +4,7 @@ import Layout from 'ember-d3-demo/utils/d3/layout';
 import { scaleLinear } from 'd3-scale';
 import { max, min } from 'd3-array';
 import { axisLeft, axisBottom } from 'd3-axis';
-import { getYAxisWidth } from 'ember-d3-demo/utils/d3/yAxisWidth';
+import { getAxisSide } from 'ember-d3-demo/utils/d3/axisWidth';
 import { format, formatLocale } from 'd3-format';
 import { schemeSet3 } from 'd3-scale-chromatic';
 import { animationType } from 'ember-d3-demo/utils/d3/animation'
@@ -61,11 +61,7 @@ export default class D3BpScatter extends Component<D3BpScatterArgs> {
 
         const pd = curLayout.getPadding();
         const data = this.args.data;
-        const svg = container.append('svg')
-            .attr("width", curLayout.getWidth())
-            .attr("height", curLayout.getHeight())
-            .classed("scatter-svg", true)
-            .style("background-color", "#fafbfc");
+        const svg = curLayout.getSvg()
 
         // y 轴
         let yMaxValue = this.getAxisMaxValue(data, 2)
@@ -82,7 +78,7 @@ export default class D3BpScatter extends Component<D3BpScatterArgs> {
             .classed('y-axis', true)
             .call(yAxis);
 
-        const yAxisWidth = getYAxisWidth(yAxisIns)
+        const yAxisWidth = getAxisSide(yAxisIns)
         yAxisIns.attr("transform", `translate(${pd.pl + yAxisWidth},0)`)
 
         // x轴

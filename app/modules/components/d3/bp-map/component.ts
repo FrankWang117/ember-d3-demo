@@ -37,10 +37,12 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
         const container = layout.getContainer()
         const tooltipIns = new D3Tooltip(container, 'map-tooltip')
         //generate svg
-        const svg = container.append('svg')
-            .attr('width', layout.getWidth())
-            .attr('height', layout.getHeight())
-            .style('background-color', '#FAFBFC');
+        const svg = layout.getSvg()
+        .style('background-color', '#FAFBFC');
+        // const svg = container.append('svg')
+        //     .attr('width', layout.getWidth())
+        //     .attr('height', layout.getHeight())
+        //     .style('background-color', '#FAFBFC');
 
         /**
          * old method 需要手动计算scale 以及 center

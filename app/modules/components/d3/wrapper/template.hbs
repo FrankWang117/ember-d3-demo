@@ -39,6 +39,8 @@
                 <D3::BpStack @data={{@model.stackData}} />
 			{{else if (eq this.navTitle 'scatter')}}
 				<D3::BpScatter @data={{@model.scatterData}} />
+			{{else if (eq this.navTitle 'scale')}}
+				<D3::Scale />
             {{/if}}
 
 			{{!-- <D3::HelloWorld class="m-2 {{if (eq this.navTitle "hello") "" "d-none"}}" /> --}}

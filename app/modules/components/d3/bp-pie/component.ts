@@ -80,9 +80,10 @@ export default class D3BpPie extends Component<D3BpPieArgs> {
         this.height = layout.getHeight()
         this.container = container
         // 生成 svg
-        let svg = container.append('svg')
-            .attr("width", width)
-            .attr("height", height)
+        let svg = layout.getSvg()
+        // let svg = container.append('svg')
+        //     .attr("width", width)
+        //     .attr("height", height)
 
         const pieData = this.layoutData
         // 基础 rect 设置 / hover 状态 rect 的设置

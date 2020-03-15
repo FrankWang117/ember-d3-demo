@@ -16,7 +16,10 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 		{ name: "Line Demo", identify: "line", comp: "d3/bp-line" },
 		{ name: "Lines Demo", identify: "lines", comp: "d3/bp-multi-lines" },
 		{ name: "China Map", identify: "map", comp: "d3/bp-map" },
-		{ name: "Stack", identify: "stack", comp: "d3/bp-stack" }
+		{ name: "Stack", identify: "stack", comp: "d3/bp-stack" },
+		{ name: "Scatter", identify: "scatter",comp: "d3/bp-scatter"},
+		{ name: "Scale&Axis", identify: "scale",comp: "d3/scale"}
+
 	]
 	@tracked pieData: any[] = this.args.model.pieData
 	@tracked navTitle: string = "hello"

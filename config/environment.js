@@ -45,6 +45,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
+    ENV.rootURL = '/ember-d3-demo';
+    ENV.locationType = 'hash';
     // here you can enable a production-specific feature
   }
 

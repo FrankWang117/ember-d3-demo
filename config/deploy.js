@@ -3,14 +3,17 @@
 
 module.exports = function(deployTarget) {
   let ENV = {
-    build: {}
+    build: {},
+    git: {
+      branch: "gh-pages",
+      repo: "https://github.com/FrankWang1991/ember-d3-demo.git",
+      worktreePath: '/tmp/demo-deploy',
+      commitMessage: 'Deployed %@'
+    }
+
     // include other plugin configuration that applies to all deploy targets here
   };
-  ENV.git = {
-    repo: 'git@github.com:FrankWang1991/ember-d3-demo.git',
-    branch: 'gh-pages',
-    commitMessage: 'Deployed %@'
-  };
+
   if (deployTarget === 'development') {
     ENV.build.environment = 'development';
     // configure other plugins for development deploy target here
@@ -23,8 +26,6 @@ module.exports = function(deployTarget) {
 
   if (deployTarget === 'production') {
     ENV.build.environment = 'production';
-    ENV.rootURL = '/ember-d3-demo';
-    ENV.locationType = 'hash';
     // configure other plugins for production deploy target here
   }
 

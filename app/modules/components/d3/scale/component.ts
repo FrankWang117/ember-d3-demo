@@ -8,6 +8,8 @@ interface D3ScaleArgs {}
 export default class D3Scale extends D3Component<D3ScaleArgs> {
     @action
     initScale() {
-        
+        console.log(this.width)
+        this.axisBuilder('.bp-scale')
+
     }
 }

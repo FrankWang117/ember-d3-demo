@@ -7,7 +7,7 @@ import { min, max } from 'd3-array';
 import { timeMonth } from 'd3-time';
 import { timeFormat } from 'd3-time-format';
 import { stack, stackOrderNone, stackOffsetNone } from 'd3-shape';
-// import { getYAxisWidth } from 'ember-d3-demo/utils/d3/axisWidth';
+import { getAxisSide } from 'ember-d3-demo/utils/d3/axisWidth';
 import { schemePaired } from 'd3-scale-chromatic';
 import AxisBuilder from 'ember-d3-demo/utils/d3/axis';
 
@@ -64,10 +64,12 @@ export default class D3BpStack extends Component<D3BpStackArgs> {
 
         let maxYValue = max(series, d => max(d, d => d[1]))
         let axisOpt = {
+            className: "y-axis",
+            position: 'left',
             max: maxYValue
         }
         let axisBuilder = new AxisBuilder(layout,axisOpt);
-        axisBuilder.createAxis()
+        // axisBuilder.createAxis()
         // y 轴 scale
         // const yScale = scaleLinear()
         //     .domain([0, max(series, d => max(d, d => d[1]))])
@@ -81,7 +83,7 @@ export default class D3BpStack extends Component<D3BpStackArgs> {
 
         // y轴宽度
         // const yAxisWidth: number = getYAxisWidth(svg.select('.y-axis'));
-        const yAxisWidth: number = axisBuilder.getAxisWidth()
+        const yAxisWidth: number = getAxisSide(svg.select('.y-axis'))
 
         // svg.select(".y-axis")
         //     .attr("transform", `translate(${padding.pl + yAxisWidth},${padding.pt})`);

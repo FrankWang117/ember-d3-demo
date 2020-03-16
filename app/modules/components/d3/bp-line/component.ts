@@ -5,7 +5,10 @@ import { scaleBand, scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max } from 'd3-array';
 import { line, curveCatmullRom } from 'd3-shape';
+import { format, formatLocale } from 'd3-format';
 import { tweenDash, circleChange,animationType } from '../../../../utils/d3/animation';
+import D3Tooltip from 'ember-d3-demo/utils/d3/tooltip';
+
 interface D3BpLineArgs {
     data: any[]
     /**
@@ -52,6 +55,8 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
             .attr('height', this.height)
             .style('background-color', "#fafbfc");
 
+        // tooltip
+        const tooltipIns = new D3Tooltip(container,'line-tooltip')
         const yScale = scaleLinear()
             .domain([0, max(dataset.map((ele: any[]) => ele[1]))])
             .range([this.height - padding.top - padding.bottom, 0]);
@@ -142,18 +147,26 @@ export default class D3BpLine extends Component<D3BpLineArgs> {
             .attr('stroke', '#FFAB00')
             .attr('fill', '#FFAB00');
         combCirle
-            .on('mouseover', function () {
+            .on('mouseover', function (d:any) {
                 circleChange(select(this).select('.outer-circle'), 6)
-                circleChange(select(this).select('.inner-circle'), 4)
+                circleChange(select(this).select('.inner-circle'), 4);
+                tooltipIns.setCurData(d);
+                tooltipIns.show();
+                tooltipIns.setContent(function (data: any) {
+                    if (!data) {
+                        return `<p>本市场暂无数据</p>`
+                    }
+                    return `
+                    <p>时间${ data[0]}</p>
+                    <p>数据${formatLocale("thousands").format("~s")(data[1])}</p>
+                    <p>其他数据${format(".2%")(data[3])}</p>`
+                })
             })
             .on('mouseout', function () {
                 circleChange(select(this).select('.outer-circle'), 3)
                 circleChange(select(this).select('.inner-circle'), 1)
+                tooltipIns.hidden()
+
             })
-
-
-
-
-
     }
 }

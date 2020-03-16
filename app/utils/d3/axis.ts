@@ -1,5 +1,5 @@
 import { scaleLinear } from 'd3-scale';
-import { axisLeft } from 'd3-axis';
+import { axisLeft, axisRight, axisBottom, axisTop, AxisDomain, Axis } from 'd3-axis';
 import Layout from './layout';
 import { getAxisSide } from './axisWidth'
 
@@ -30,26 +30,97 @@ class AxisBuilder {
     constructor(layout: Layout, opt: any = DEFAULT) {
         this.opt = { ...DEFAULT, ...opt };
         this.layout = layout
+        switch (this.opt.type) {
+            case 'value':
+                console.log("value axis");
+                break;
+            case 'category':
+            default:
+                this.createAxis();
+                break;
+        }
     }
     public createAxis() {
         let grid = this.layout.getGrid();
         let svg = this.layout.getSvg();
-        // TODO switch opt.type
-        // y 轴 scale
-        this.scale = scaleLinear()
+
+        this.scale = this.rangeScale(this.opt.position, grid);
+        this.axis = this.directionAxis(this.opt.position);
+        svg.append('g')
+            .classed(this.opt.className, true)
+            .call(this.axis);
+        // this.axisWidth = getAxisSide(svg.select('.y-axis'));
+        // TODO 移动应该放到 x 轴也生成之后执行
+        // svg.select(".y-axis")
+        //     .attr("transform", `translate(${grid.padding.pl + this.axisWidth},0)`);
+        this.axisTransform(this.opt.position, grid)
+    }
+    private axisTransform(dir: string, grid: any) {
+        let distance: number[] = [0, 0];
+        let svg = this.layout.getSvg();
+        let { padding, height, width } = grid;
+        let yAxisWidth = getAxisSide(svg.select('.y-axis'));
+        let xAxisHeight = getAxisSide(svg.select('.x-axis'), 'height');
+
+        switch (dir) {
+            case 'bottom':
+                distance = [0, height - padding.pb - xAxisHeight];
+                break;
+            case 'top':
+                distance = [padding.pl, padding.pt];
+                break;
+            case 'right':
+                distance = [width - padding.pr - yAxisWidth, 0];
+                break;
+            case 'left':
+                distance = [padding.pl + yAxisWidth, 0];
+                break;
+            default:
+                break;
+        }
+
+        svg.select(`.${this.opt.className}`)
+            .attr("transform", `translate(${distance[0]},${distance[1]})`);
+
+    }
+    private rangeScale(direction: string, grid: any) {
+        let range: number[] = [0, 0];
+        let { padding, width, height } = grid;
+
+        switch (direction) {
+            case 'bottom':
+            case 'top':
+                let svg = this.layout.getSvg()
+                let yAxisWidth = getAxisSide(svg.select('.y-axis'))
+                range = [padding.pl, width - padding.pr - yAxisWidth]
+                break;
+            case 'right':
+            case 'left':
+            default:
+                range = [height - padding.pt, padding.pb + this.opt.offset]
+        }
+        return scaleLinear()
             // TODO max & min 可以自行计算
             .domain([this.opt.min, this.opt.max])
-            // 
-            .range([grid.height - grid.padding.pt, grid.padding.pb]);
-        this.axis = axisLeft(this.scale);
-        svg.append('g')
-            .classed("y-axis", true)
-            .call(this.axis);
-        this.axisWidth = getAxisSide(svg.select('.y-axis'));
-        // TODO 移动应该放到 x 轴也生成之后执行
-        svg.select(".y-axis")
-            .attr("transform", `translate(${grid.padding.pl + this.axisWidth},0)`);
-
+            .range(range);
+    }
+    private directionAxis(direction: string): Axis<AxisDomain> {
+        // let axis: Axis<AxisDomain>
+        switch (direction) {
+            case 'right':
+                return axisRight(this.scale)
+                break;
+            case 'bottom':
+                return axisBottom(this.scale)
+                break;
+            case 'top':
+                return axisTop(this.scale)
+                break;
+            case 'left':
+            default:
+                return axisLeft(this.scale)
+                break;
+        }
     }
     public getScale() {
         return this.scale

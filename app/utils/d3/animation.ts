@@ -13,7 +13,7 @@ function tweenDash() {
     // 虚线，由一系列数字组成，数字个数为偶数(负责会自动重复一遍使其为偶数),表示线长-间隙-线长-间隙..
     return function (t: any) { return i(t); };
 }
-function circleChange(container: Selection<BaseType, {}, null, undefined>, radius: number) {
+function circleChange(container: Selection<BaseType, unknown, null, undefined>, radius: number) {
     container
         .transition()
         .duration(600)

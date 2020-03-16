@@ -1,5 +1,5 @@
 interface iTooltip {
-    show:boolean;
+    isShow:boolean;
     content: string;
     position: number[];
     

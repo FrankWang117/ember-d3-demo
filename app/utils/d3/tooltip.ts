@@ -1,10 +1,11 @@
-import { select, clientPoint, event, Selection, BaseType } from 'd3-selection';
+import { select, clientPoint, event, Selection, BaseType, selectAll } from 'd3-selection';
 import { iTooltip } from "../interface/tooltip";
 
 class D3Tooltip implements iTooltip {
-    show: boolean = false;
+    isShow: boolean = false;
     content: string = "";
     position: number[] = []
+    gap: number[] = [24, 24]
     // 图表的容器，svg 的容器。
     // tooltip 与 svg 同一层级。
     private container: Selection<BaseType, unknown, HTMLElement, null>
@@ -20,7 +21,14 @@ class D3Tooltip implements iTooltip {
         this.tooltip = tooltip;
 
     }
-
+    public show() {
+        this.tooltip.classed('d-none',false)
+            .style('display','block')
+    }
+    public hidden() {
+        this.tooltip.classed('d-none',true)
+            .style('display','none')
+    }
     private getClass(className: string | string[]): string {
         let result: string = ""
         if (!className || className.length == 0) {
@@ -36,16 +44,17 @@ class D3Tooltip implements iTooltip {
             default:
                 break;
         }
-        // 需配合 bootstrap 
+        // 需配合 bootstrap，如果没有 bootstrap ，需要设置class d-none 为 display：none 
         return result + " d-none";
     }
     public setCurData(data: any) {
         this.data = data;
-        const self = this
-        this.container.select('svg').on('mousemove', this.throttle(function () {
+        const self = this;
+        const children = (<HTMLElement>this.container.select('svg')?.node())?.children;
+        selectAll(children).on('mousemove', this.throttle(function () {
             if (event) {
                 let p = clientPoint(this, event);
-                self.setPosition(p)
+                self.updatePosition(p)
                 // TODO 可根据与四个边框的距离
                 // 合理配置提示框在鼠标的方位
             }
@@ -58,13 +67,49 @@ class D3Tooltip implements iTooltip {
         this.tooltip
             .style("position", "absolute")
     }
-    public setPosition(p: number[]) {
+    private updatePosition(p: number[]) {
         this.position = p;
+        const { container, tooltip } = this;
+
+        let containerSize = [parseInt(container.style('width')),
+        parseInt(container.style('height'))]
+        let tooltipSize = [parseInt(tooltip.style('width')),
+        parseInt(tooltip.style('height'))];
+
+        let restWidthSpace = containerSize[0] / 2;
+        let restHeightSpace = containerSize[1] / 2;
+        let resultPosition = [p[0], p[1]];
+        switch (true) {
+            case p[0] > restWidthSpace:
+                resultPosition[0] = p[0] - tooltipSize[0] - this.gap[0];
+                // this.moveTo(p[0]-tooltipSize[0]-this.gap[0],p[1]+this.gap[1])
+                break;
+            case p[0] <= restWidthSpace:
+                resultPosition[0] = p[0] + this.gap[0];
+                // resultPosition[1] = p[1] + this.gap[1];
+                // this.moveTo(p[0] + this.gap[0], p[1] + this.gap[1])
+                break;
+            default:
+                break;
+        }
+        switch (true) {
+            case p[1] > restHeightSpace:
+                resultPosition[1] = p[1] - tooltipSize[1] - this.gap[1];
+                break;
+            case p[1] <= restHeightSpace:
+                resultPosition[1] = p[1] + this.gap[1];
+                break;
+            default:
+                break;
+        }
+        this.moveTo(resultPosition[0], resultPosition[1])
+    }
+    private moveTo(x: number, y: number) {
         this.tooltip
             .transition()
             .duration(300)
-            .style("left", `${this.position[0]}px`)
-            .style('top', `${this.position[1]}px`)
+            .style('left', `${x}px`)
+            .style('top', `${y}px`)
     }
     public getContainer() {
         return this.container

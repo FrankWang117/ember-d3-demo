@@ -1,6 +1,7 @@
 @import "ember-bootstrap/bootstrap";
 @import "./nav";
 @import "./map";
+@import './scale';
 
 $navHeight: 56px;
 .main-nav {

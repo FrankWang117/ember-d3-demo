@@ -5,11 +5,12 @@ import { scaleLinear } from 'd3-scale'
 import Layout from 'ember-d3-demo/utils/d3/layout';
 import { geoPath, geoMercator } from 'd3-geo';
 import { max, min } from 'd3-array';
-import { select, mouse, clientPoint, event, selectAll } from 'd3-selection';
+import { select } from 'd3-selection';
 import { format, formatLocale } from 'd3-format';
 import { animationType } from '../../../../utils/d3/animation';
 import { iTooltip } from '../../../../utils/interface/tooltip';
 import D3Tooltip from "ember-d3-demo/utils/d3/tooltip";
+
 interface D3BpMapArgs {
     data: any[];
     tooltip: iTooltip;
@@ -67,7 +68,7 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
             const southSea = select("#southsea")
 
             let southSeaWidth = southSea.node().getBBox().width / 5
-            let southSeaH = southSea.node().getBBox().height / 5
+            let southSeaH = southSea!.node().getBBox().height / 5
             select("#southsea")
                 .classed("southsea", true)
                 .attr("transform", `translate(${layout.getWidth() - southSeaWidth - 24},${layout.getHeight() - southSeaH - 24}) scale(0.2)`)
@@ -97,8 +98,7 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
                         let curProvData: any[] = data.find((provData: any) => provData[0] === prov.slice(0, 2))
 
                         tooltipIns.setCurData(curProvData);
-                        tooltipIns.getTooltip()
-                            .classed("d-none", false);
+                        tooltipIns.show();
                         tooltipIns.setContent(function (data: any) {
                             console.log(data)
                             if (!data) {
@@ -114,16 +114,9 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
                         select(this)
                             .classed('path-active', false);
 
-                        container.select('.map-tooltip')
-                            .classed("d-none", true)
-                        selectAll('p').remove()
+                        tooltipIns.hidden()
+                        // selectAll('p').remove()
                     });
-                svg.on('mousemove', tooltipIns.throttle(function () {
-                    if (event) {
-                        let p = clientPoint(this, event);
-                        tooltipIns.setPosition(p)
-                    }
-                }, 50, 100))
 
                 const t = animationType();
 

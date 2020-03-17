@@ -1,6 +1,7 @@
 @import "ember-bootstrap/bootstrap";
 @import "./nav";
 @import "./map";
+@import './md.scss';
 @import './scale';
 
 $navHeight: 56px;
@@ -11,7 +12,7 @@ html,body {
  height: 100%;
 }
 body > .main {
-    height: calc(100% - #{$navHeight});
+    min-height: calc(100% - #{$navHeight});
 }
 .coordinate {
     width: 300px;

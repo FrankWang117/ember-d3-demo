@@ -10,6 +10,7 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 	private menuList: any[] = [
 		{ name: 'Hello', identify: 'hello', comp: "d3/hello-wrold" },
 		{ name: 'Bind Data', identify: 'bind' },
+		{ name: "Basic Shape", identify: "shape", comp: "d3/basic-shape" },
 		{ name: 'Basic Histogram', identify: "histo", comp: "d3/basic-histogram" },
 		{ name: "Bar", identify: "bar", comp: "d3/bp-bar" },
 		{ name: "Layout&Pie", identify: "pie", comp: "d3/bp-pie" },
@@ -17,8 +18,8 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 		{ name: "Lines Demo", identify: "lines", comp: "d3/bp-multi-lines" },
 		{ name: "China Map", identify: "map", comp: "d3/bp-map" },
 		{ name: "Stack", identify: "stack", comp: "d3/bp-stack" },
-		{ name: "Scatter", identify: "scatter",comp: "d3/bp-scatter"},
-		{ name: "Scale&Axis", identify: "scale",comp: "d3/scale"}
+		{ name: "Scatter", identify: "scatter", comp: "d3/bp-scatter" },
+		{ name: "Scale&Axis", identify: "scale", comp: "d3/scale" }
 
 	]
 	@tracked pieData: any[] = this.args.model.pieData

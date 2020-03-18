@@ -1,4 +1,4 @@
-import Color from './Color';
+import Color from './property/Color';
 import Text from './Text';
 
 class Notation {

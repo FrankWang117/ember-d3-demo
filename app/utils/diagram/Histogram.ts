@@ -3,5 +3,12 @@ import { DataAdapter ,HistogramProperty} from './index';
 class Histogram {
     data: any = [];
     adapter: DataAdapter;
-    property: HistogramProperty
+    property: HistogramProperty;
+    draw() {
+
+    }
+    scale() {
+
+    }
 }
+export default Histogram;

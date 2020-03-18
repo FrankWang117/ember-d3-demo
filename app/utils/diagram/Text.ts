@@ -1,4 +1,4 @@
-import Color from "./Color";
+import Color from "./property/Color";
 
 class Text {
     public content:string = ''

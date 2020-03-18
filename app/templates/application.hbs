@@ -1,10 +1,17 @@
 <div class="container d3-container bg-light main-nav">
 	<div class="row">
-		<BsNavbar @type="light" @backgroundColor="light" @collapsed= {{true}} @onCollapse= {{action (mut collapsed) true}} @onExpand= {{action (mut collapsed) false}}
+		<BsNavbar 
+			@type="light" 
+			@backgroundColor="light" 
+			@collapsed={{true}} 
+			@onCollapse={{action (mut collapsed) true}} 
+			@onExpand= {{action (mut collapsed) false}}
 		 @vertical= {{true}} as |navbar|>
 			<div class="navbar-header">
-				{{navbar.toggle}}
-				{{#link-to "index" class="navbar-brand" }}D3-Demo{{/link-to}}
+				<LinkTo @route={{"index"}} class="navbar-brand">
+					D3-Demo
+				</LinkTo>
+				{{!-- {{#link-to "index" class="navbar-brand" }}D3-Demo{{/link-to}} --}}
 			</div>
 			<navbar.content>
 				<navbar.nav as |nav|>
@@ -15,7 +22,7 @@
 						<nav.link-to @route="d3">D3</nav.link-to>
 					</nav.item>
 					<nav.item>
-						<nav.link-to @route="d3">图表展示(undo)</nav.link-to>
+						<nav.link-to @route="show">图表展示</nav.link-to>
 					</nav.item>
 					{{!-- <nav.dropdown as |dd|>
 						<dd.toggle>图表展示 <span class="caret"></span></dd.toggle>

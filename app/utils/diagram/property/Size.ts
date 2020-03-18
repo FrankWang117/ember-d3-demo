@@ -14,3 +14,4 @@ class Size {
     }
     
 }
+export default Size;

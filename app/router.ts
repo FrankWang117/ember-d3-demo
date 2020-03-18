@@ -10,4 +10,5 @@ Router.map(function() {
   this.route('d3', function() {
     this.route('hello');
   });
+  this.route('show')
 });

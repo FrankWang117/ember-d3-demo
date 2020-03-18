@@ -6,7 +6,7 @@ module.exports = function(deployTarget) {
     build: {},
     git: {
       branch: "gh-pages",
-      repo: "https://github.com/FrankWang1991/ember-d3-demo.git",
+      repo: "https://github.com/frankwang1991/ember-d3-demo.git",
       worktreePath: '/tmp/demo-deploy',
       commitMessage: 'Deployed %@'
     }

@@ -1,4 +1,7 @@
 class Rotation {
+    constructor(d:number) {
+        this.degree = d;
+    }
     private degree:number
     public setDegree(d:number) {
         this.degree = d

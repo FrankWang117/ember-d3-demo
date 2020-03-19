@@ -5,6 +5,10 @@ class HistogramProterty  {
     relativePos: Position | null = null
     rotate: Rotation | null = null
     colorPool: Color[] = []
+    setSize(x:number,y:number) {
+        let size = new Size(x,y)
+        this.hitSize = size;
+    }
     resize() {
 
     }
@@ -15,4 +19,5 @@ class HistogramProterty  {
         
     }
 }
+
 export default HistogramProterty

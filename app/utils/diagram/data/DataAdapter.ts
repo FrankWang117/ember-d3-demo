@@ -1,6 +1,6 @@
 class DataAdapter {
-    parse() {
-        
+    parse(data:any[]): any[]{
+        return data;
     }
 }
 export default DataAdapter

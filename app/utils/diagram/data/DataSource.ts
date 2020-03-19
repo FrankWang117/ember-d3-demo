@@ -4,7 +4,7 @@ class DataSource {
     conceptHierarchis: Object[] = []
     sourceType: string = '';
     load() {
-
+        
     }
     refresh() {
 
@@ -13,3 +13,4 @@ class DataSource {
         
     }
 }
+export default DataSource;

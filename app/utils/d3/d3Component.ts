@@ -1,13 +1,11 @@
 import Component from '@glimmer/component';
-import Layout from './layout';
-import axisBuilder from './axis';
 
 interface ID3Component {
     width:number;
     height: number;
 
 }
-export default class D3Componnet<Args extends {} = {}> extends Component<ID3Component> {
+export default class D3Componnet extends Component<ID3Component> {
 
     width:number = 0;
     height: number = 0;
@@ -15,7 +13,6 @@ export default class D3Componnet<Args extends {} = {}> extends Component<ID3Comp
         super(owner,args)
 
     }
-    public axisBuilder(className:string) {
-        const layout = new Layout(className)
+    public axisBuilder() {
     }
 }

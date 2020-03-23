@@ -47,7 +47,7 @@ export default class D3BpBar extends Component<D3BpBarArgs> {
          */
         let yAxisData = DATASET.map((ele: Array<any>): number => ele[1])
         const yScale = scaleLinear()
-            .domain([0, max(yAxisData)])
+            .domain([0, <number>max(yAxisData)])
             .range([height - padding.top - padding.bottom, 0]);
 
         /**
@@ -86,16 +86,16 @@ export default class D3BpBar extends Component<D3BpBarArgs> {
             .classed('bp-bar-rect', true)
             .attr("fill", "#579AFF")
             .attr("transform", `translate(${padding.left},${padding.top})`)
-            .attr('x', (d) => {
-                return xScale(d[0]) + xScale.bandwidth() / 2 - barWidth / 2
+            .attr('x', (d:any) => {
+                return (xScale(d[0]) || 0) + xScale.bandwidth() / 2 - barWidth / 2
             })
-            .attr('y', (d) => height - padding.bottom - 24) // 24 为x坐标轴的高度
+            .attr('y', () => height - padding.bottom - 24) // 24 为x坐标轴的高度
             .attr('width', barWidth + "px")
             .attr('height', 0)
             .transition(t)
             .duration(4000)
-            .attr('y', (d) => yScale(d[1]))
-            .attr('height', (d) => height - padding.top - padding.bottom - yScale(d[1]))
+            .attr('y', (d:any) => yScale(d[1]))
+            .attr('height', (d:any) => height - padding.top - padding.bottom - yScale(d[1]))
             .text((d: any) => d[0]);
 
         /**

@@ -1,5 +1,5 @@
 import { Color, DataAdapter, DataSource, HistogramProperty, Position, Rotation, Size, }
-    from './index';
+    from '../index';
 
 class Histogram {
     data: DataSource = new DataSource();
@@ -8,7 +8,7 @@ class Histogram {
     xAxis: any = null   // TODO interface Axis
     yAxis: any = null
     private defaultOpt: any = {
-        data: [],
+        dataset: [],
         dimension: [],
         xAxis:{},
         yAxis: {},
@@ -30,26 +30,33 @@ class Histogram {
         /**
          *
          */
-        opt = {...this.defaultOpt,...opt}
-        this.xAxis = opt.xAxis
-        this.yAxis = opt.yAxis
+         let option = this.defaultOpt
+         for(let item in option) {
+             if(option.hasOwnProperty(item)) {
+                option[item] = opt[item] || option[item]
+             }
+         }
+         
+        // opt = {...this.defaultOpt,...opt}
+        this.xAxis = option.xAxis
+        this.yAxis = option.yAxis
         // init DataSource
         this.data = new DataSource();
-        this.data.data = opt.data
-        this.data.dimension = opt.dimension
+        this.data.data = option.dataset
+        this.data.dimension = option.dimension
         // init DataAdapter
         this.adapter = new DataAdapter()
         // init HistogramProperty
         this.property = new HistogramProperty()
-        this.property.hitSize = new Size(opt.size.w, opt.size.h);
-        this.property.relativePos = new Position(opt.position.x, opt.position.y);
-        this.property.rotate = new Rotation(opt.rotate.degree)
-        this.property.colorPool = [new Color(...opt.color)]
+        this.property.hitSize = new Size(option.size.w, option.size.h);
+        this.property.relativePos = new Position(option.position.x, option.position.y);
+        this.property.rotate = new Rotation(option.rotate.degree)
+        this.property.colorPool = option.colorPool.map((color:any) => new Color(...color))
     }
-    draw(selection) {
+    draw(_selection:any) {
 
     }   
-    scale(opt:any,grid:any):any {
+    scale(_opt:any,_grid:any):any {
 
     }
 }

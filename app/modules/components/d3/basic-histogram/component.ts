@@ -33,7 +33,7 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
             .enter()
             .append("rect")
             .attr("x", 20)
-            .attr("y", function (d, i) {
+            .attr("y", function (_d, i:number) {
                 return i * RECTHEIGHT
             })
             .attr("width", function (d) {
@@ -76,7 +76,7 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
             .enter()
             .append("rect")
             .attr("x", 20)
-            .attr("y", function (d, i) {
+            .attr("y", function (_d, i:number) {
                 return i * RECTHEIGHT
             })
             .attr("width", function (d) {
@@ -88,7 +88,7 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
     @action
     initAxes() {
         const linear = scaleLinear()
-            .domain([0, max(dataset)])
+            .domain([0, <number>max(dataset)])
             .range([0, 250]);
 
         
@@ -101,7 +101,7 @@ export default class D3BasicHistogram extends Component<D3BasicHistogramArgs> {
             .enter()
             .append("rect")
             .attr("x", 20)
-            .attr("y", (d, i: number) => i * RECTHEIGHT)
+            .attr("y", (_d, i: number) => i * RECTHEIGHT)
             .attr("width", d => linear(d))
             .attr("height", RECTHEIGHT - 2)
             .attr("fill", "#FFC400");

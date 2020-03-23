@@ -1,9 +1,7 @@
-<h2>Diagram</h2>
-
-<div class="card" >
+<div class="card"  ...attributes>
   <div class="card-body">
     <h5 class="card-title">{{@title.content}}</h5>
     <h6 class="card-subtitle mb-2 text-muted"></h6>
-    <div class="bar text-center" {{did-insert this.draw}}></div>
+    <div id={{@chart.id}} class="bar text-center" {{did-insert this.draw}}></div>
   </div>
 </div>

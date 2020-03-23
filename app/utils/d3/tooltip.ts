@@ -1,4 +1,4 @@
-import { select, clientPoint, event, Selection, BaseType, selectAll } from 'd3-selection';
+import { clientPoint, event, Selection, BaseType, selectAll } from 'd3-selection';
 import { iTooltip } from "../interface/tooltip";
 
 class D3Tooltip implements iTooltip {

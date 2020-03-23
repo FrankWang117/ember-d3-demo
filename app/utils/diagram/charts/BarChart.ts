@@ -1,4 +1,4 @@
-import Histogram from '../Histogram';
+import Histogram from './Histogram';
 import { min, max } from 'd3-array';
 import AxisBuilder from '../scale/AxisBuilder';
 import { axisTransform } from '../scale/axisTransform'

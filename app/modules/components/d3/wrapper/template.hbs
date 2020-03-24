@@ -16,8 +16,12 @@
 				{{component content.comp class="m-2 (if (eq this.navTitle content.identify) " " "d-none")" }}
 			{{/each}} --}}
 
-			{{#if (eq this.navTitle "hello")}}
+			{{#if (eq this.navTitle "pre")}}
+				<D3::PreWork class="m-2 {{if (eq this.navTitle "pre") "" "d-none"}}" />
+			{{else if (eq this.navTitle "hello")}}
 				<D3::HelloWorld class="m-2 {{if (eq this.navTitle "hello") "" "d-none"}}" />
+				
+			
 			{{else if (eq this.navTitle "bind")}}
 				<D3::BindData class="m-2 {{if (eq this.navTitle "bind") "" "d-none"}}" />
 			{{else if (eq this.navTitle "shape")}}

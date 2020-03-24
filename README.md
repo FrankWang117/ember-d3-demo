@@ -1,25 +1,32 @@
-# ember-d3-demo
+# 由浅入深的 D3.js 初级及进阶指南--零 背景介绍与环境安装
+毋庸置疑的是图表在页面中发挥着重要的作用.而对图表进行封装的插件/组件也是层出不穷,像 ECharts 、HighChart 、G2 等.这些都是非常优秀的图表组件.我也在实际项目中使用过 ECharts 做各种图表,也是发现了它的强大之处,但随着工作的复杂以及其他要求,ECharts 这种告诉封装的图表组件开始不能满足我们的设计需求,所以现在使用 D3.js 作为我们的图表开发库,来开发我们公司使用的通用图表组件.  
+这里是将自己学习 D3.js 中的笔记以及自己的感悟记录下来,与大家讨论.**学习 D3.js 之后,相信限制大家作图的只有想象力了.**
 
-> ember-cli v3.16.0  
-> node 10.16.0
+因为在实际工作中使用的框架是 [Ember.js](https://emberjs.com/)   (非常推荐大家使用).所以这里就使用 Ember.js 开发. **当然**,框架只是一个工具,实现图表的方法都被封装进一个个的函数中,所以 D3.js 的学习跟框架是没有关系的.这系列文章**同样适用于使用 React.js 、Vue.js的**小伙伴们.   
 
-[项目地址](https://github.com/FrankWang1991/ember-d3-demo) 
+所需环境:
+- ember-cli v3.16.1  
+- node v10.16.0
+- d3.js v5
 
-## 0. 前言
-1. 它是声明式的，不是命令式的d3的第一个核心是：数据驱动的dom元素创建，把这个思想上的弯绕过来，掌握1/3了
-2. 它是数据处理包，不是图形绘制包d3的第二个核心是：它的大量的api，提供的是对数据的转换与处理，无论是scale、layout还是svg.line等，都仅仅是对数据的处理，和绘制图形与DOM操作没有半毛关系。把这个思想上的弯绕过来，又掌握1/3了
-3. 它的api通常返回的是一个函数，这个函数的具体功能，通过函数对象的方法约定。d3的javascript写法不是那么符合常人的逻辑，比如：调用d3.svg.line()，这个我们获得的是一个line函数，作用是把原始数据转化成svg的path元素的d属性需要的字符串，如果连起来写的话是这样：var nd=d3.svg.line()(data); 这样获得的nd才是可以塞给path的d属性的东西。把这个思想上的弯绕过来，又掌握1/3
+[项目地址](https://github.com/FrankWang1991/ember-d3-demo) 与 [在线预览图表展示](https://frankwang1991.github.io/ember-d3-demo)
 
-以上三点转过来以后，基本算理解d3背后的思路了，大约看文档也可以独立写点东西出来了。d3的使用模式如下：
+## 0. 前言  
+在 [知乎作者 ciga2011](https://www.zhihu.com/question/22171866/answer/22512521) 的回答里看到这样的对 D3.js 学习的描述:
+> 1. 它是声明式的，不是命令式的d3的第一个核心是：数据驱动的dom元素创建，把这个思想上的弯绕过来，掌握1/3了;
+> 2. 它是数据处理包，不是图形绘制包d3的第二个核心是：它的大量的api，提供的是对数据的转换与处理，无论是scale、layout还是svg.line等，都仅仅是对数据的处理，和绘制图形与DOM操作没有半毛关系。把这个思想上的弯绕过来，又掌握1/3了;
+> 3. 它的api通常返回的是一个函数，这个函数的具体功能，通过函数对象的方法约定。d3的javascript写法不是那么符合常人的逻辑，比如：调用d3.svg.line()，这个我们获得的是一个line函数，作用是把原始数据转化成svg的path元素的d属性需要的字符串，如果连起来写的话是这样：var nd=d3.svg.line()(data); 这样获得的nd才是可以塞给path的d属性的东西。把这个思想上的弯绕过来，又掌握1/3.
+> 
+> 以上三点转过来以后，基本算理解d3背后的思路了，大约看文档也可以独立写点东西出来了。d3的使用模式如下：
+>  - step1：准备数据
+>  - step2：创建dom
+>   - step3：设置属性
 
-    - step1：准备数据
-    - step2：创建dom
-    - step3：设置属性
-
-作者：ciga2011 ， [来源](https://www.zhihu.com/question/22171866/answer/22512521)
+现在当然可以只是直道这段话就可以,我们会在以后的学习过程中经常有这样的感受的.  
+那现在就开始对环境进行配置.
 ## 1. 前期工作
-### 1.1 修改项目为 Pods 目录（可选）
-``` javascript
+### 1.1 修改 Ember.js 项目为 Pods 目录（可选）
+```javascript
 // config/environment.js
 let ENV = {
     modulePrefix: 'ember-d3-demo',
@@ -27,7 +34,7 @@ let ENV = {
     // ...
   };
 ```
-``` javascript
+```javascript
 // .ember-cli
 {
   "disableAnalytics": false,
@@ -37,23 +44,25 @@ let ENV = {
 
 ### 1.2 依赖安装
 首先是可选安装 typescript 
-```azurepowershell
-ember install ember-cli-typescript@latest && yarn add typescript@3.7.5
+```powershell
+ember install ember-cli-typescript
 ```
-安装 d3， 由于上面是使用了 typescript，所以安装命令变为：
-```azurepowershell
+更多在 Ember.js 中使用 Typescript 的内容 [请查看](https://nightire.gitbook.io/ember-octane/resources/integrate-with-typescript) .
+安装 D3.js， 由于上面是使用了 typescript，所以安装命令变为：
+```powershell
 ember install ember-d3 && npm i --save @types/d3
 ```
 如果没有安装 typescript 那就按照官方教程正常安装即可：
-```azurepowershell
+```powershell
 ember install ember-d3 && yarn add --save-dev d3@5.15.0
 ```
-至此，关于 d3 的依赖安装完毕，如果是非 ember octane 版本，这时候可以跳过下面的说明，继续使用了。
+至此，关于 D3.js 的依赖安装完毕，如果是非 ember octane 版本，这时候可以跳过下面的说明，继续使用了。
 由于octane 版本中修改了 component / controller / route 等改为类的继承与扩展。对于 component 来说就是组件的声明周期不再是 `didInsertElement` ，而是变成了使用 [modifier](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html) .就需要多一步的安装：
 ```shell
 ember install @ember/render-modifiers
 ```
-**注意：以后的 ember 版本可能会默认添加此 modifier**  
+**注意：以后的 ember 版本可能会默认添加此 modifier**    
+至此我们的环境就安装完毕了.下一章让我们开始进入 D3.js 的世界.
 
 ## 2. 选择元素和绑定数据
 使用 d3 创建 hello world 文本。  
@@ -1570,8 +1579,8 @@ export default class D3BpMap extends Component<D3BpMapArgs> {
 const timeDate = data.map(datum => datum.month)
 // y 轴 scale
 const yScale = scaleLinear()
-	.domain([0, max(series, d => max(d, d => d[1]))])
-	.range([this.height - padding.pt - padding.pb, 0]);
+    .domain([0, max(series, d => max(d, d => d[1]))])
+    .range([this.height - padding.pt - padding.pb, 0]);
 
 const yAxis = axisLeft(yScale)
 
@@ -1646,7 +1655,7 @@ svg.selectAll('g.stack')
         enter => enter.append('g'),
         update => update,
         exit => exit.remove()
-	)
+    )
     .classed('stack', true)
     .attr('fill', (d:any,i:number)=>schemePaired[i])
     .attr('transform',`translate(${yAxisWidth},${padding.pt})`)

@@ -8,6 +8,7 @@ interface D3WrapperArgs {
 
 export default class D3Wrapper extends Component<D3WrapperArgs> {
 	private menuList: any[] = [
+		{ name: 'Pre-Work', identify: 'pre', comp: "d3/pre-work" },
 		{ name: 'Hello', identify: 'hello', comp: "d3/hello-wrold" },
 		{ name: 'Bind Data', identify: 'bind' },
 		{ name: "Basic Shape", identify: "shape", comp: "d3/basic-shape" },
@@ -23,7 +24,7 @@ export default class D3Wrapper extends Component<D3WrapperArgs> {
 
 	]
 	@tracked pieData: any[] = this.args.model.pieData
-	@tracked navTitle: string = "hello"
+	@tracked navTitle: string = "pre"
 	get pieResult() {
 		return this.pieData
 	}

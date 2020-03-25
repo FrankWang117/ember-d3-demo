@@ -27,7 +27,7 @@ function axisTransform_old(dir: string, grid: any) {
     return distance
 
 }
-function getAxisSide(selection: Selection<SVGSVGElement, unknown, HTMLElement, null>, prop: string = "width") {
+function getAxisSide(selection: Selection<any, unknown, any, null>, prop: string = "width") {
     if (selection.node() === null) {
         return 0;
     }
@@ -59,4 +59,4 @@ function axisTransform(axisOpt: any, grid: any, svg: any) {
     return distance
 
 }
-export { axisTransform }
+export { axisTransform ,getAxisSide}

@@ -29,7 +29,7 @@ class AxisBuilder {
     scale: any;
     axis: any;
     grid: any;
-    defaultGrid:any =  {
+    defaultGrid: any = {
         padding: {
             pt: 24,
             pr: 24,
@@ -40,15 +40,15 @@ class AxisBuilder {
         height: 200
     }
     // axis options
-    constructor(opt: any = DEFAULT,grid:any) {
+    constructor(opt: any = DEFAULT, grid: any) {
         this.opt = { ...DEFAULT, ...opt };
-        this.grid ={...this.defaultGrid,...grid}
-        this.createAxis();
+        this.grid = { ...this.defaultGrid, ...grid }
+        this.scale = this.rangeScale(this.opt);
     }
-    public createAxis() {
-
-        this.scale = this.rangeScale(this.opt, this.grid);
-        this.axis = this.directionAxis(this.opt.position);
+    public createAxis(scale: any, option: any) {
+        this.opt = option
+        this.setScaleDomain(scale, option)
+        this.axis = this.directionAxis(scale, option.position);
         // svg.append('g')
         //     .classed(this.opt.className, true)
         //     .call(this.axis);
@@ -58,60 +58,26 @@ class AxisBuilder {
         //     .attr("transform", `translate(${grid.padding.pl + this.axisWidth},0)`);
         // this.axisTransform(this.opt.position, grid)
     }
-    private axisTransform(dir: string, grid: any) {
-        let distance: number[] = [0, 0];
-        let svg = this.layout.getSvg();
-        let { padding, height, width } = grid;
-        let yAxisWidth = getAxisSide(svg.select('.y-axis'));
-        let xAxisHeight = getAxisSide(svg.select('.x-axis'), 'height');
 
-        switch (dir) {
-            case 'bottom':
-                distance = [0, height - padding.pb - xAxisHeight];
-                break;
-            case 'top':
-                distance = [padding.pl, padding.pt];
-                break;
-            case 'right':
-                distance = [width - padding.pr - yAxisWidth, 0];
-                break;
-            case 'left':
-                distance = [padding.pl + yAxisWidth, 0];
-                break;
-            default:
-                break;
-        }
-
-        svg.select(`.${this.opt.className}`)
-            .attr("transform", `translate(${distance[0]},${distance[1]})`);
-
-    }
-    private rangeScale(option: any, grid: any) {
-        let range: number[] = [0, 0];
-        let { padding, width, height } = grid;
-        let { offset, position, type, min, max, data } = option;
-        let domain: any[] = [min, max]
-        switch (position) {
-            case 'bottom':
-            case 'top':
-                range = [padding.pl +  offset, width - padding.pr]
-                break;
-            case 'right':
-            case 'left':
-            default:
-                range = [height - padding.pt - offset, padding.pb]
-        }
+    private rangeScale(option: any) {
+        let { type } = option;
+        // switch (position) {
+        //     case 'bottom':
+        //     case 'top':
+        //         range = [padding.pl +  offset, width - padding.pr]
+        //         break;
+        //     case 'right':
+        //     case 'left':
+        //     default:
+        //         range = [height - padding.pt - offset, padding.pb]
+        // }
         let scaleType = null;
         switch (type) {
             case 'category':
                 scaleType = scaleBand()
-                    .domain(data)
-                    .range((<[number, number]>range))
                 break;
             case 'time':
                 scaleType = scaleTime()
-                    .domain(domain)
-                    .range(range);
                 break;
             case 'log':
                 scaleType = scaleLog();
@@ -120,9 +86,6 @@ class AxisBuilder {
             default:
                 // 数值轴，适用于连续数据
                 scaleType = scaleLinear()
-                    // TODO max & min 可以自行计算
-                    .domain(domain)
-                    .range(range);
                 break;
         }
         return scaleType
@@ -130,10 +93,45 @@ class AxisBuilder {
         // .domain([min, max])
         // .range(range);
     }
-    private directionAxis(direction: string): Axis<AxisDomain> {
+    private setScaleDomain(scale: any, option: any) {
+        let range: number[] = [0, 0];
+        let { padding, width, height } = this.grid;
+        let { offset, position, type, min, max, data } = option;
+        let domain: any[] = [min, max]
+        switch (position) {
+            case 'bottom':
+            case 'top':
+                range = [padding.pl + offset, width - padding.pr]
+                break;
+            case 'right':
+            case 'left':
+            default:
+                range = [height - padding.pt - offset, padding.pb]
+        }
+        switch (type) {
+            case 'category':
+                scale = scale
+                    .domain(data)
+                    .range((<[number, number]>range))
+                break;
+            case 'log':
+                scale = scaleLog();
+                break;
+            case 'value':
+            case 'time':
+            default:
+                // 数值轴，适用于连续数据
+                scale = scale
+                    // TODO max & min 可以自行计算
+                    .domain(domain)
+                    .range(range);
+                break;
+        }
+        return scale
+    }
+    public directionAxis(scale: any, direction: string): Axis<AxisDomain> {
         let axis: Axis<AxisDomain>
         // let { formatter } = this.opt;
-        let scale = this.scale
         // if (formatter instanceof Function) {
         //     formatter = formatter()
         // }
@@ -161,9 +159,30 @@ class AxisBuilder {
     public getAxis() {
         return this.axis
     }
-    // public getAxisWidth() {
-    //     return this.axisWidth
-    // }
+
+    public axisTransform(position:string,edgeWidth:number, grid: any) {
+        let distance: number[] = [0, 0];
+        let { padding, height, width } = grid;
+        
+        switch (position) {
+            case 'bottom':
+                distance = [0, height - padding.pb - edgeWidth];
+                break;
+            case 'top':
+                distance = [padding.pl, padding.pt];
+                break;
+            case 'right':
+                distance = [width - padding.pr - edgeWidth, 0];
+                break;
+            case 'left':
+                distance = [padding.pl + edgeWidth, 0];
+                break;
+            default:
+                break;
+        }
+        return distance;
+
+    }
 }
 
 export default AxisBuilder

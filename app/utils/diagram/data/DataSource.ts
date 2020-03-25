@@ -1,5 +1,5 @@
 class DataSource {
-    data:any[] = [];
+    dataset:any[] = [];
     dimension: string[] = [];
     conceptHierarchis: Object[] = []
     sourceType: string = '';

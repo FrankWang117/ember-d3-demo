@@ -1,4 +1,4 @@
-import { Histogram, BarChart, LineChart } from '../index';
+import { BarChart, Histogram, LineChart, PieChart } from '../index';
 
 class ChartPaint {
     constructor(chart: any) {
@@ -10,6 +10,9 @@ class ChartPaint {
                 break;
             case 'line':
                 histogram = new LineChart(chart);
+                break;
+            case 'pie':
+                histogram = new PieChart(chart);
                 break;
             default:
                 histogram = new BarChart(chart)

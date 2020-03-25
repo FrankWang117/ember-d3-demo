@@ -38,7 +38,7 @@ export default function () {
           dataset: [
             {
               phase: '2018Q1',
-              sales: 2263262.25,
+              sales: 2200000.25,
               quote: 2584466.75,
               rate: "0.8757",
               product: "all"
@@ -199,6 +199,89 @@ export default function () {
             dimension: "phase"
           }
         }
+      },
+      {
+        id: "pie-test-2020-03-24",
+        type: "charts",
+        attributes: {
+          title: "This is frist pie chart",
+          type: "pie",
+          dataset: [
+            {
+              phase: '2018Q1',
+              sales: 2200000.25,
+              quote: 2584466.75,
+              rate: "0.8757",
+              product: "all"
+            },
+            {
+              phase: '2018Q2',
+              sales: 2194822.96875,
+              quote: 2643496,
+              rate: "0.8303",
+              product: "all"
+            },
+            {
+              phase: '2018Q3',
+              sales: 2359731.25,
+              quote: 2770609.75,
+              rate: "0.8517",
+              product: "all"
+            },
+            {
+              phase: '2018Q4',
+              sales: 2165844.0625,
+              quote: 2914783.4375,
+              rate: "0.7431",
+              product: "all"
+            },
+            {
+              phase: '2019Q1',
+              sales: 704715.671875,
+              quote: 2274136,
+              rate: "0.3099",
+              product: "all"
+            },
+            {
+              phase: '2019Q2',
+              sales: 677539.40625,
+              quote: 2806879,
+              rate: "0.2414",
+              product: "all"
+            },
+            {
+              phase: '2019Q3',
+              sales: 679346.203125,
+              quote: 2975934,
+              rate: "0.2283",
+              product: "all"
+            }
+          ],
+          commonts: [
+            "first Commont","Second Commont"
+          ],
+          dimension: ['phase', 'sales', 'quote', 'rate', 'product'],
+          bgColor: [0, 0, 0],
+          colorPool: [
+            [92, 166, 239],
+            [195,221,65],
+            [124,103,228],
+            [243,162,80],
+            [72,207,234],
+            [68,228,148],
+            [233,99,143]
+          ],
+          pieAxis: {
+            dimension: 'sales',
+            radius: [80,100],
+            hoverOffset: 20,
+            center: ['50%','50%']
+          },
+          yAxis: {},
+          xAxis: {},
+          
+        }
+
       }
     ]
     }

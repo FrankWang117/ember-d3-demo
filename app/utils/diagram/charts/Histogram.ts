@@ -16,17 +16,23 @@ abstract class Histogram {
     protected pieAxis: any = null
     public yAxisBuilder: AxisBuilder | undefined
     public xAxisBuilder: AxisBuilder | undefined
+    // TODO 更好的方式?
     protected grid: any = null // 将 grid 单独从 option 中抽离出来
+    protected geo: any = null
+    protected polar: any = null
     private defaultOpt: any = {
         dataset: [],
         dimension: [],
         xAxis: {},
         yAxis: {},
         pieAxis: {},
-        size: {
-            w: 700,
-            h: 400
-        },
+        grid: {},
+        geo: {},
+        polar:{},
+        // size: {
+        //     w: 500,
+        //     h: 400
+        // },
         position: {
             x: 0,
             y: 0
@@ -45,11 +51,13 @@ abstract class Histogram {
                 option[item] = opt[item] || option[item]
             }
         }
-
         // opt = {...this.defaultOpt,...opt}
+
         this.xAxis = option.xAxis
         this.yAxis = option.yAxis
         this.pieAxis = option.pieAxis
+        this.geo = option.geo
+        this.polar = option.polar
         // init DataSource
         this.data = new DataSource();
         this.data.dataset = option.dataset
@@ -58,18 +66,35 @@ abstract class Histogram {
         this.adapter = new DataAdapter()
         // init HistogramProperty
         this.property = new HistogramProperty()
-        this.property.hitSize = new Size(option.size.w, option.size.h);
+        this.property.hitSize = new Size(option.grid.width, option.grid.height);
+        this.property.hitSize.setPadding(option.grid.padding)
         this.property.relativePos = new Position(option.position.x, option.position.y);
         this.property.rotate = new Rotation(option.rotate.degree)
-        this.property.colorPool = option.colorPool.map((color: any) => new Color(...color))
+        this.property.colorPool = option.colorPool.map((color: any) => new Color(color))
         this.grid = {
             padding: this.property.hitSize?.getPadding(),
             width: this.property.hitSize?.getWidth(),
-            height: this.property.hitSize?.getHeight()
+            height: this.property.hitSize?.getHeight(),
+            bgColor: new Color(option.grid.bgColor || 'transparent')
         }
     }
-    public draw(_selection: any) {
-
+    public draw(selection: Selection<any, unknown, any, any>) {
+        this.resetSize(selection)
+    }
+    protected resetSize(selection: Selection<any, unknown, any, any>) {
+        let grid = this.grid;
+        let preSetWidth = parseFloat(grid.width);
+        let preSetHeight = parseFloat(grid.height);
+        if (isNaN(preSetWidth)) {
+            let sWidth = parseFloat(selection.style('width'));
+            this.property.hitSize.setWidth(sWidth);
+            this.grid = { ...this.grid, width: sWidth };
+        }
+        if (isNaN(preSetHeight)) {
+            let sHeight = parseFloat(selection.style('height'));
+            this.property.hitSize.setHeight(sHeight);
+            this.grid = { ...this.grid, height: sHeight };
+        }
     }
     public scale(_svg: Selection<any, unknown, any, any>): any {
 

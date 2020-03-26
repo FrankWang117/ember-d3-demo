@@ -1,21 +1,21 @@
 
 class Size {
-    private width: number = 100;
-    private height: number  = 100;
+    private width: number | string = 100;
+    private height: number | string = 100;
     private padding: any = {
-        pt: 24,
-        pr: 24,
-        pb: 24,
-        pl: 24
+        pt: 0,
+        pr: 0,
+        pb: 0,
+        pl: 0
     }
-    constructor(w:number,h:number) {
+    constructor(w: number | string, h: number | string) {
         this.width = w;
         this.height = h;
     }
-    public setWidth(w:number) {
+    public setWidth(w: number) {
         this.width = w
     }
-    public setHeight(h:number) {
+    public setHeight(h: number) {
         this.height = h
     }
     public getWidth() {
@@ -27,9 +27,15 @@ class Size {
     public getPadding() {
         return this.padding;
     }
+    public setPadding(padding: any = this.padding) {
+        let { top: pt = 0, right: pr = 0, bottom: pb = 0, left: pl = 0 } = padding;
+
+        this.padding = { pt, pr, pb, pl }
+
+    }
     public placeHolderMethod() {
         return 'do something'
     }
-    
+
 }
 export default Size;

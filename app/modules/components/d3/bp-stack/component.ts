@@ -58,6 +58,9 @@ export default class D3BpStack extends Component<D3BpStackArgs> {
 
         const series = stackIns(data);
 
+        series.map(ele=> {
+            console.log(ele)
+        })
         // end 获取 stack 处理数据
 
         const timeDate = data.map(datum => datum.month);
@@ -91,7 +94,7 @@ export default class D3BpStack extends Component<D3BpStackArgs> {
         // 为了给两端留出空白区域
         const phMinDate = timeMonth.offset(min(timeDate), -1);
         const phMaxDate = timeMonth.offset(max(timeDate), 1);
-
+        console.log(timeDate)
         // x轴scale
         const xScale = scaleTime()
             .domain([phMinDate, phMaxDate])

@@ -1,5 +1,18 @@
-
-{{#each @model as |chart|}}
+<div class="container">
+  <div class="grid-wrapper">
+    {{#each @model as |chart|}}
+      <Diagram
+        class={{"grid-item"}}
+        @chart={{chart.chart}}
+        @histogram={{chart.histogram}}
+        @commonts={{chart.commonts}}
+        @title={{chart.title}}
+        @notation={{chart.natation}}
+      />
+    {{/each}}
+  </div>
+</div>
+{{!-- {{#each @model as |chart|}}
   <Diagram
     @chart={{chart.chart}}
     @histogram={{chart.histogram}}
@@ -7,5 +20,4 @@
     @title={{chart.title}}
     @notation={{chart.natation}}
   />
-{{/each}}
-<div class="divider-menu"></div>
+{{/each}} --}}

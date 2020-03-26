@@ -6,6 +6,11 @@ export default class Chart extends DS.Model.extend({
 	commonts: DS.attr(),  // should be a relationship
 	dataset: DS.attr(), // should be a relationship
 	dimension: DS.attr(), // same up
+	grid: DS.attr(),
+	// 地图坐标系
+	geo: DS.attr(),
+	// 极坐标轴
+	polar:DS.attr(),
 	bgColor: DS.attr(),
 	colorPool: DS.attr(),
 	yAxis: DS.attr(),

@@ -9,7 +9,7 @@ class PieChart extends Histogram {
     }
     draw(selection: any) {
         // selection are chart container
-        let p = this.property;
+        super.draw(selection)
         let grid = this.grid;
 
         let svg = selection.append('svg')
@@ -22,7 +22,6 @@ class PieChart extends Histogram {
 
     }
     public parseData(data:any[]) {
-        console.log(this.pieAxis)
         const pieLayout = pie()
             // 设置如何从数据中获取要绘制的值()
             .value((d: any) => d[this.pieAxis.dimension])

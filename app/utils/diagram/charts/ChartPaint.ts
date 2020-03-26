@@ -1,4 +1,5 @@
-import { BarChart, Histogram, LineChart, PieChart } from '../index';
+import { BarChart, Histogram, LineChart, PieChart, ScatterChart, StackChart, MapChart }
+    from '../index';
 
 class ChartPaint {
     constructor(chart: any) {
@@ -13,6 +14,15 @@ class ChartPaint {
                 break;
             case 'pie':
                 histogram = new PieChart(chart);
+                break;
+            case 'map':
+                histogram = new MapChart(chart);
+                break;
+            case 'stack':
+                histogram = new StackChart(chart);
+                break;
+            case 'scatter':
+                histogram = new ScatterChart(chart);
                 break;
             default:
                 histogram = new BarChart(chart)

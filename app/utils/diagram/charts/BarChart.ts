@@ -12,6 +12,7 @@ class BarChart extends Histogram {
         this.dataset = this.parseData(this.data.dataset)
     }
     draw(selection: Selection<any, unknown, any, any>) {
+        super.draw(selection)
         // selection are chart container
         let grid = this.grid
         let svg = selection.append('svg')

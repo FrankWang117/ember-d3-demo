@@ -1,0 +1,11 @@
+.grid-wrapper {
+    display: grid;
+
+    grid-template-columns: 550px 550px;
+    grid-template-rows: 500px 500px;
+
+    .grid-item {}
+    .diagram-container {
+        height: 426px;
+    }
+}

@@ -28,11 +28,7 @@ abstract class Histogram {
         pieAxis: {},
         grid: {},
         geo: {},
-        polar:{},
-        // size: {
-        //     w: 500,
-        //     h: 400
-        // },
+        polar: {},
         position: {
             x: 0,
             y: 0
@@ -79,7 +75,7 @@ abstract class Histogram {
         }
     }
     public draw(selection: Selection<any, unknown, any, any>) {
-        this.resetSize(selection)
+        this.resetSize(selection);
     }
     protected resetSize(selection: Selection<any, unknown, any, any>) {
         let grid = this.grid;
@@ -121,7 +117,12 @@ abstract class Histogram {
     }
     // 在 update*axis 方法之后以及之前执行
     protected resetOffset(opt: any, edgeWidth: number) {
-        opt.offset = opt.offset ? opt.offset + edgeWidth : edgeWidth
+        console.log(opt.offset)
+        console.log(edgeWidth)
+        console.log("opt offset and edgeWidth")
+        let { offset } = opt
+        opt.edgeWidth = edgeWidth
+        // opt.offset = offset && offset !== edgeWidth ? offset + edgeWidth : edgeWidth
     }
     // 每个更新需要执行两次?
     protected updateYaxis(yAxisBuilderIns: AxisBuilder, svg: Selection<any, unknown, any, any>) {

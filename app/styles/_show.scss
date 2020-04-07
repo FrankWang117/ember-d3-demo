@@ -5,7 +5,16 @@
     grid-template-rows: 500px 500px;
 
     .grid-item {}
+
     .diagram-container {
         height: 426px;
+
+        /** 设置 坐标轴的样式 */
+        g.x-axis,
+        g.y-axis {
+            font-size: 12px;
+            color: #7A869A;
+            text-align: right;
+        }
     }
 }

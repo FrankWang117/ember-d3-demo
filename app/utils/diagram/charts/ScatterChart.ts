@@ -1,7 +1,7 @@
 import Histogram from './Histogram';
 import AxisBuilder from '../scale/AxisBuilder';
 import { getAxisSide } from '../scale/axisTransform';
-import { Selection, select } from 'd3-selection';
+import { Selection, select, event } from 'd3-selection';
 import { animationType } from '../animation/animation';
 import { min, max } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
@@ -23,8 +23,11 @@ class ScatterChart extends Histogram {
             .attr('height', grid.height)
 
         this.scale(svg);
-        // 画 bar
+        // 画
         this.drawScatter(svg);
+        // action
+        
+        // this.mouseAction(svg);
 
     }
     scale(svg: Selection<any, unknown, any, any>) {
@@ -135,6 +138,46 @@ class ScatterChart extends Histogram {
                 max: xMaxValue,
             }
         }
+    }
+    private mouseAction(svg: Selection<any, unknown, any, any>) {
+        alert('mouse')
+        let { grid, property: p, dataset } = this,
+            { pl, pr } = grid.padding,
+            yAxisWidth = getAxisSide(svg.select(`.${this.yAxis.className}`)),
+            leftBlank = pl + yAxisWidth;
+
+            let eachBandWidth = (this.xAxisBuilder as AxisBuilder).getScale().bandwidth()
+        
+        svg.on('mouseover', function () {
+            console.log("bandWidh" + eachBandWidth)
+            console.log(event.offsetX);
+            
+            let arr = dataset.map((_item, i) => {
+                return i * eachBandWidth
+            })
+            console.log(arr)
+            let curPoint = event.offsetX - leftBlank;
+            console.log(curPoint)
+            let count = arr.findIndex((item, i) => {
+                return item <= curPoint && arr[i+1] >= curPoint;
+            })
+            console.log(count)
+                // (event.offsetX - leftBlank) / (grid.width - leftBlank - pr) * (dataset.length - 1)
+            // count = Math.round(count) >= dataset.length ? dataset.length - 1 : count // 判断一下count是否为>=data.length的值,确立一下边界值
+            console.log(count)
+            let curData = dataset[Math.round(count)];
+            console.log(curData)
+        })
+        // svg.selectAll('rect')
+        //     .on('mouseover', function () {
+        //         select(this).attr("fill", "#FFC400")
+        //     })
+        //     .on('mouseout', function () {
+        //         select(this)
+        //             .transition()
+        //             .duration(1000)
+        //             .attr("fill", p.colorPool[0].HEX())
+        //     })
     }
 }
 export default ScatterChart;

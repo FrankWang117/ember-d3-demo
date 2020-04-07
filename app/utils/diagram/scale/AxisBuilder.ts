@@ -1,5 +1,6 @@
 import { scaleLinear, scaleBand, scaleTime, scaleLog } from 'd3-scale';
 import { axisLeft, axisRight, axisBottom, axisTop, AxisDomain, Axis } from 'd3-axis';
+import { format } from 'd3-format';
 
 const DEFAULT = {
     show: true, // 暂时无作用
@@ -22,7 +23,8 @@ const DEFAULT = {
     data: null, // category 必须
     splitNumber: 5, // 坐标轴的分割段数，需要注意的是这个分割段数只是个预估值，最后实际显示的段数会在这个基础上根据分割后坐标轴刻度显示的易读程度作调整。
     ticks: [5],     // ticks & formatter 暂不支持，可以在外部进行对坐标轴更新来格式化 ticks
-    formatter: null
+    formatter: null,
+    edgeWidth: 0
 }
 class AxisBuilder {
     opt: any
@@ -49,6 +51,8 @@ class AxisBuilder {
         this.opt = option
         this.setScaleDomain(scale, option)
         this.axis = this.directionAxis(scale, option.position);
+
+        this.formatAxis()
         // svg.append('g')
         //     .classed(this.opt.className, true)
         //     .call(this.axis);
@@ -58,20 +62,26 @@ class AxisBuilder {
         //     .attr("transform", `translate(${grid.padding.pl + this.axisWidth},0)`);
         // this.axisTransform(this.opt.position, grid)
     }
+    private formatAxis() {
+        let axis = this.getAxis(),
+            option = this.opt,
+            count = option.ticks || 10,
+            formatter = option.formatter;
 
+        // https://github.com/xswei/d3-format#locale_format
+        if(!formatter) {
+            axis.ticks(count)
+        } else if (typeof formatter === 'string') {
+            axis.ticks(count,formatter)
+        } else if (typeof formatter === 'function') {
+            axis.ticks(count)
+                .tickFormat(formatter)
+        }
+    }
     private rangeScale(option: any) {
-        let { type } = option;
-        // switch (position) {
-        //     case 'bottom':
-        //     case 'top':
-        //         range = [padding.pl +  offset, width - padding.pr]
-        //         break;
-        //     case 'right':
-        //     case 'left':
-        //     default:
-        //         range = [height - padding.pt - offset, padding.pb]
-        // }
-        let scaleType = null;
+        let { type } = option,
+            scaleType = null;
+
         switch (type) {
             case 'category':
                 scaleType = scaleBand()
@@ -94,19 +104,22 @@ class AxisBuilder {
         // .range(range);
     }
     private setScaleDomain(scale: any, option: any) {
-        let range: number[] = [0, 0];
-        let { padding, width, height } = this.grid;
-        let { offset, position, type, min, max, data } = option;
-        let domain: any[] = [min, max]
+        console.log(option)
+        let range: number[] = [0, 0],
+            { padding, width, height } = this.grid,
+            { offset,edgeWidth = 0, position, type, min, max, data } = option,
+            domain: any[] = [min, max];
+
+        console.log(option.edgeWidth)
         switch (position) {
             case 'bottom':
             case 'top':
-                range = [padding.pl + offset, width - padding.pr]
+                range = [padding.pl + offset + edgeWidth, width - padding.pr]
                 break;
             case 'right':
             case 'left':
             default:
-                range = [height - padding.pt - offset, padding.pb]
+                range = [height - padding.pt - offset-edgeWidth, padding.pb]
         }
         switch (type) {
             case 'category':

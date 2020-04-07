@@ -1,46 +1,200 @@
 import Histogram from './Histogram';
-import { Selection, select } from 'd3-selection';
+import { Selection, select, clientPoint } from 'd3-selection';
 import { json, xml } from 'd3-fetch';
 import { max, min } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
 import { geoPath, geoMercator } from 'd3-geo';
 import { animationType, tweenDash } from '../animation/animation';
+import StateMachine from 'javascript-state-machine';
+import D3Tooltip from '../tooltip/Tooltip';
+import { formatLocale, format } from 'd3-format';
 
 class MapChart extends Histogram {
+    private fsm: any = null
+    private tooltip: D3Tooltip | undefined
+    private selection: Selection<any, unknown, any, any>
     constructor(opt: any) {
         super(opt)
-        this.dataset = this.parseData(this.data.dataset)
+        this.dataset = this.parseData(this.data.dataset);
+        this.fsm = new StateMachine({
+            init: 'china',
+            transitions: [
+                { name: 'drilldown', from: 'china', to: 'province' },
+                { name: 'scrollup', from: 'province', to: 'china' }
+            ]
+        })
     }
     draw(selection: any) {
         // selection are chart container
-        super.draw(selection)
+        super.draw(selection);
+        // 将 svg 容器放到全局,供 update 使用
+        this.selection = selection;
         let grid = this.grid;
 
         let svg = selection.append('svg')
             .attr('width', grid.width)
-            .attr('height', grid.height)
-        // 饼图无坐标轴(dimension 信息保存在 xAxis 中)
-        // this.scale(svg);
-        this.drawMap(svg)
+            .attr('height', grid.height);
+
+        this.tooltip = new D3Tooltip(selection, 'b-tooltip');
+
+        async function flow(this: any) {
+            await this.queryData()
+            // 无坐标轴(dimension 信息保存在 geo 中);
+            // this.scale(svg);
+            // draw map
+            await this.drawMap(svg)
+            // 添加交互
+            this.mouseAction(svg);
+            // 测试交互
+            this.testInteraction(svg);
+        }
+        flow.call(this)
+
     }
-    public parseData(data: any[]) {
-        return data
-        // const pieLayout = pie()
-        //     // 设置如何从数据中获取要绘制的值()
-        //     .value((d: any) => d[this.pieAxis.dimension])
-        //     // 设置排序规则 (null 表示原始排序)
-        //     .sort(null)
-        //     // 设置第一个数据的起始角度 (默认为 0)
-        //     .startAngle(0)
-        //     // 设置弧度的终止角度，(默认 2*Math.PI)
-        //     // endAngle - startAngle 为 2 π 则表示一个整圆
-        //     .endAngle(2 * Math.PI)
-        //     // 弧度之间的空隙角度(默认 0)
-        //     .padAngle(0);
-        // return pieLayout(data)
+    testInteraction(svg: Selection<any, unknown, any, any>) {
+        let fsm = this.fsm;
+        let self = this,
+            selection = this.selection;
+
+        svg.selectAll('path').on('click', function (d:any) {
+            let prov = d
+            console.log(prov)
+            if (fsm.state === 'province') {
+                fsm.scrollup()
+            } else {
+                fsm.drilldown()
+            }
+            self.updateChart(selection);
+        })
+    }
+    updateChart(selection: Selection<any, unknown, any, any>) {
+        selection.select('svg').remove();
+        this.tooltip?.remove();
+        this.draw(selection)
+    }
+    queryData() {
+        let fsm = this.fsm,
+            dimension = fsm.state,
+            data: any[] = [];
+
+        return new Promise((resolve, reject) => {
+            resolve('query data')
+        }).then(res => {
+            console.log(res);
+            if (dimension === 'china') {
+                data = [
+                    {
+                        label: '山东省',
+                        sales: 22000.25,
+                        quote: 2584466.75,
+                        rate: "0.8757",
+                        product: "all"
+                    },
+                    {
+                        label: '广东省',
+                        sales: 2194822.975,
+                        quote: 2643496,
+                        rate: "0.8303",
+                        product: "all"
+                    },
+                    {
+                        label: '北京市',
+                        sales: 2359731.25,
+                        quote: 2770609.75,
+                        rate: "0.8517",
+                        product: "all"
+                    },
+                    {
+                        label: '陕西省',
+                        sales: 2165844.0625,
+                        quote: 2914783.4375,
+                        rate: "0.7431",
+                        product: "all"
+                    },
+                    {
+                        label: '吉林省',
+                        sales: 704715.671875,
+                        quote: 2274136,
+                        rate: "0.3099",
+                        product: "all"
+                    },
+                    {
+                        label: '广西壮族自治区',
+                        sales: 677539.40625,
+                        quote: 2806879,
+                        rate: "0.2414",
+                        product: "all"
+                    },
+                    {
+                        label: '内蒙古自治区',
+                        sales: 679346.203125,
+                        quote: 2975934,
+                        rate: "0.2283",
+                        product: "all"
+                    }
+                ]
+            } else if (dimension === 'province') {
+                data = [
+                    {
+                        label: '济南市',
+                        sales: 2000.25,
+                        quote: 258466.75,
+                        rate: "0.18757",
+                        product: "all"
+                    },
+                    {
+                        label: '济宁市',
+                        sales: 214822.975,
+                        quote: 243496,
+                        rate: "0.303",
+                        product: "all"
+                    },
+                    {
+                        label: '青岛市',
+                        sales: 259731.25,
+                        quote: 270609.75,
+                        rate: "0.517",
+                        product: "all"
+                    },
+                    {
+                        label: '烟台市',
+                        sales: 165844.0625,
+                        quote: 914783.4375,
+                        rate: "0.431",
+                        product: "all"
+                    },
+                    {
+                        label: '聊城市',
+                        sales: 4715.75,
+                        quote: 274136,
+                        rate: "0.3099",
+                        product: "all"
+                    },
+                    {
+                        label: '枣庄市',
+                        sales: 77539.25,
+                        quote: 806879,
+                        rate: "0.14",
+                        product: "all"
+                    },
+                    {
+                        label: '潍坊市',
+                        sales: 79346.2,
+                        quote: 275934,
+                        rate: "0.2283",
+                        product: "all"
+                    }
+                ]
+            }
+            return this.parseData(data)
+        }).then(data => {
+            this.dataset = data
+        })
+
+        // this.dataset = this.parseData(data)
     }
     private drawMap(svg: Selection<any, unknown, any, any>) {
-        let { grid,property: p, geo, dataset } = this;
+        let { grid, property: p, geo, dataset } = this;
         // const tooltipIns = new D3Tooltip(container, 'map-tooltip')
 
         const maxData = max(dataset.map((datum: any[]) => datum[geo.dimension]))
@@ -54,7 +208,7 @@ class MapChart extends Histogram {
         //     "#1E7EC8",
         //     "#18669A"
         // ])
-        xml("../json/southchinasea.svg").then(xmlDocument => {
+        return xml("../json/southchinasea.svg").then(xmlDocument => {
             svg.html(function () {
                 return select(this).html() + xmlDocument.getElementsByTagName("g")[0].outerHTML;
             });
@@ -65,7 +219,7 @@ class MapChart extends Histogram {
             select("#southsea")
                 .classed("southsea", true)
                 .attr("transform", `translate(${grid.width - southSeaWidth - grid.padding.pr},${grid.height - southSeaH - grid.padding.pb}) scale(0.2)`)
-                .attr("fill","#fafbfc");
+                .attr("fill", "#fafbfc");
 
             return json('../json/chinawithoutsouthsea.json')
         })
@@ -83,33 +237,7 @@ class MapChart extends Histogram {
                     .attr("fill", "#fafbfc")
                     .attr("stroke", "white")
                     .attr("class", "continent")
-                    .attr("d", path)
-                    .on('mouseover', function (_d: any) {
-                        const curSelect = select(this);
-                        curSelect.classed('path-active', true);
-
-                        // let prov = d.properties.name;
-                        // let curProvData: any[] = dataset.find((provData: any) => provData['label'] === prov)
-
-                        // tooltipIns.setCurData(curProvData);
-                        // tooltipIns.show();
-                        // tooltipIns.setContent(function (data: any) {
-                        //     if (!data) {
-                        //         return `<p>本市场暂无数据</p>`
-                        //     }
-                        //     return `
-                        //         <p>${ data[0]} 市场概况</p>
-                        //         <p>市场规模${formatLocale("thousands").format("~s")(data[2])}</p>
-                        //         <p>EI ${format(".2%")(data[1])}</p>`
-                        // })
-                    })
-                    .on('mouseout', function () {
-                        select(this)
-                            .classed('path-active', false);
-
-                        // tooltipIns.hidden()
-                        // selectAll('p').remove()
-                    });
+                    .attr("d", path);
 
                 const t = animationType();
 
@@ -122,6 +250,10 @@ class MapChart extends Histogram {
                         return color(curProvData ? curProvData[geo.dimension] : 0)
                     });
             });
+
+
+    }
+    private showRect(svg:Selection<any,unknown,any,any>) {
         // 显示渐变矩形条
         const linearGradient = svg.append("defs")
             .append("linearGradient")
@@ -169,7 +301,37 @@ class MapChart extends Histogram {
         //     .attr("y", layout.getHeight() - 83 - layout.getPadding().pb + 12) // 12 为字体大小
         //     .text(format("~s")(maxData))
         //     .classed("linear-text", true)
+    }
+    private mouseAction(svg: Selection<any, unknown, any, any>) {
+        let { grid, property: p, dataset, tooltip } = this,
+            { pl, pr } = grid.padding,
+            leftBlank = pl;
+        svg.selectAll("path").on('mousemove', function (d: any) {
+            const curSelect = select(this);
+            curSelect.classed('path-active', true);
 
+            let prov = d.properties.name,
+                curData: any[] = dataset.find((provData: any) => provData['label'] === prov)
+
+            let p = clientPoint(this, event);
+            tooltip?.updatePosition(p);
+            tooltip?.setCurData(curData);
+            tooltip?.setContent(function (data: any) {
+                if (!data) {
+                    return `<p>本市场暂无数据</p>`
+                }
+                return `
+                        <p>${ data['label']} 市场概况</p>
+                        <p>市场规模${formatLocale("thousands").format("~s")(data['quote'])}</p>
+                        <p>sales ${format(".2%")(data['sales'])}</p>`
+            })
+            tooltip?.show();
+        })
+        svg.selectAll("path").on('mouseout', function () {
+            select(this)
+                .classed('path-active', false);
+            tooltip?.hidden();
+        })
     }
 }
 export default MapChart;

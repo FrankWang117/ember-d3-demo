@@ -380,6 +380,7 @@ export default function () {
 							"first Commont", "Second Commont"
 						],
 						dimension: ['label', 'sales', 'quote', 'rate', 'product'],
+						dimensions: ['PROVINCE',"CITY"],
 						grid: {
 							width: "auto",
 							height: "auto",
@@ -398,7 +399,7 @@ export default function () {
 							"#18669A"
 						],
 						geo: {
-							dimension: 'sales',
+							dimension: 'SALES_VALUE',
 							center: ['50%', '50%']
 						},
 						yAxis: {},

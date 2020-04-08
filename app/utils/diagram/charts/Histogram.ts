@@ -5,6 +5,7 @@ import AxisBuilder from '../scale/AxisBuilder';
 import { max } from 'd3-array';
 import { getAxisSide } from '../scale/axisTransform';
 import { transition } from 'd3-transition';
+import D3Tooltip from '../tooltip/Tooltip';
 
 abstract class Histogram {
     public data: DataSource = new DataSource();
@@ -43,6 +44,8 @@ abstract class Histogram {
     }
     // 
     public updateData: Function = function(){}
+    // tooltip instance
+    private tooltip: D3Tooltip | undefined = undefined
 
     constructor(opt: any) {
         // 通过 opt 对象，初始化 Histogram
@@ -190,6 +193,12 @@ abstract class Histogram {
     protected transition() {
         return transition()
             .ease();
+    }
+    // 更新图表的操作
+    protected updateChart(selection: Selection<any, unknown, any, any>) {
+        selection.select('svg').remove();
+        this.tooltip?.remove();
+        this.draw(selection)
     }
 }
 export default Histogram;

@@ -9,7 +9,7 @@ import StateMachine from 'javascript-state-machine';
 // import fetch from 'fetch';
 
 class BarChart extends Histogram {
-    private tooltip: D3Tooltip | undefined
+    private tooltip: D3Tooltip | undefined 
     private fsm: any = null
     private selection: Selection<any, unknown, any, any>
 
@@ -26,7 +26,7 @@ class BarChart extends Histogram {
                 if (i + 1 !== dimensions.length) {
                     return { name: 'drilldown', from: d, to: arr[i + 1] }
                 }
-                return { name: 'scrollup', from: d, to: arr[0] }
+                return { name: 'rollup', from: d, to: arr[0] }
             });
 
         this.fsm = new StateMachine({
@@ -48,7 +48,6 @@ class BarChart extends Histogram {
         this.tooltip = new D3Tooltip(selection, 'b-tooltip');
 
         async function flow(this: any) {
-
             await this.requeryData(this.updateData)
             // await this.queryData()
             this.scale(svg);
@@ -62,11 +61,11 @@ class BarChart extends Histogram {
         flow.call(this)
 
     }
-    updateChart(selection: Selection<any, unknown, any, any>) {
-        selection.select('svg').remove();
-        this.tooltip?.remove();
-        this.draw(selection)
-    }
+    // updateChart(selection: Selection<any, unknown, any, any>) {
+    //     selection.select('svg').remove();
+    //     this.tooltip?.remove();
+    //     this.draw(selection)
+    // }
     testInteraction(svg: Selection<any, unknown, any, any>) {
         let self = this,
             { fsm, selection, dimensions } = this;
@@ -79,7 +78,7 @@ class BarChart extends Histogram {
                 dimensions.forEach((item:string)=> {
                     fsm[item] = ''
                 })
-                fsm.scrollup();
+                fsm.rollup();
             } else {
                 fsm.drilldown();
                 dimensions.forEach((item:string)=> {

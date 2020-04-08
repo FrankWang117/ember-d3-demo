@@ -15,13 +15,30 @@ class MapChart extends Histogram {
     private selection: Selection<any, unknown, any, any>
     constructor(opt: any) {
         super(opt)
-        this.dataset = this.parseData(this.data.dataset);
+        // this.dataset = this.parseData(this.data.dataset);
+        // this.fsm = new StateMachine({
+        //     init: 'china',
+        //     transitions: [
+        //         { name: 'drilldown', from: 'china', to: 'province' },
+        //         { name: 'rollup', from: 'province', to: 'china' }
+        //     ]
+        // })
+        let dimensions = this.dimensions,
+            initFsmData = dimensions.reduce((acc: any, cur: string) => {
+                acc[cur] = '';
+                return acc
+            }, {}),
+            transitions = dimensions.map((d: string, i: number, arr: string[]) => {
+                if (i + 1 !== dimensions.length) {
+                    return { name: 'drilldown', from: d, to: arr[i + 1] }
+                }
+                return { name: 'rollup', from: d, to: arr[0] }
+            });
+
         this.fsm = new StateMachine({
-            init: 'china',
-            transitions: [
-                { name: 'drilldown', from: 'china', to: 'province' },
-                { name: 'scrollup', from: 'province', to: 'china' }
-            ]
+            init: dimensions[0],
+            data: initFsmData,
+            transitions
         })
     }
     draw(selection: any) {
@@ -38,40 +55,67 @@ class MapChart extends Histogram {
         this.tooltip = new D3Tooltip(selection, 'b-tooltip');
 
         async function flow(this: any) {
-            await this.queryData()
+            await this.requeryData(this.updateData);
             // 无坐标轴(dimension 信息保存在 geo 中);
             // this.scale(svg);
-            // draw map
-            await this.drawMap(svg)
+            // 画 map
+            await this.drawMap(svg);
             // 添加交互
             this.mouseAction(svg);
             // 测试交互
             this.testInteraction(svg);
         }
-        flow.call(this)
+        flow.call(this);
 
     }
-    testInteraction(svg: Selection<any, unknown, any, any>) {
-        let fsm = this.fsm;
-        let self = this,
-            selection = this.selection;
+    // updateChart(selection: Selection<any, unknown, any, any>) {
+    //     selection.select('svg').remove();
+    //     this.tooltip?.remove();
+    //     this.draw(selection)
+    // }
+    async requeryData(fn: Function) {
+        let { fsm, dimensions } = this,
+            data = null;
 
-        svg.selectAll('path').on('click', function (d:any) {
-            let prov = d
+        data = await fn.call(this, fsm, dimensions);
+        this.dataset = this.parseData(data);
+    }
+    testInteraction(svg: Selection<any, unknown, any, any>) {
+        let { fsm, selection, dimensions, dataset} = this;
+        let self = this;
+
+        svg.selectAll('path').on('click', function (d: any) {
+            let prov = d.properties.name,
+            curData: any = dataset.find((provData: any) => provData[fsm.state] === prov);
+
             console.log(prov)
-            if (fsm.state === 'province') {
-                fsm.scrollup()
+            console.log(curData)
+            // if (fsm.state === 'province') {
+            //     fsm.scrollup()
+            // } else {
+            //     fsm.drilldown()
+            // }
+            // self.updateChart(selection);
+            // 修改 fsm 的 data-以便获取数据的时候可以得知维度信息
+            if (fsm.state === dimensions[dimensions.length - 1]) {
+                // 如果是最后一个维度,则进行清空
+                dimensions.forEach((item: string) => {
+                    fsm[item] = ''
+                })
+                fsm.rollup();
             } else {
-                fsm.drilldown()
+                fsm.drilldown();
+                dimensions.forEach((item: string) => {
+                    fsm[item] = curData[item] || fsm[item]
+                })
             }
+            // 修改坐标轴的 dimension 
+            // self.geo.dimension = fsm.state
+
             self.updateChart(selection);
         })
     }
-    updateChart(selection: Selection<any, unknown, any, any>) {
-        selection.select('svg').remove();
-        this.tooltip?.remove();
-        this.draw(selection)
-    }
+
     queryData() {
         let fsm = this.fsm,
             dimension = fsm.state,
@@ -194,7 +238,7 @@ class MapChart extends Histogram {
         // this.dataset = this.parseData(data)
     }
     private drawMap(svg: Selection<any, unknown, any, any>) {
-        let { grid, property: p, geo, dataset } = this;
+        let { grid, property: p, geo, dataset, fsm, dimensions } = this;
         // const tooltipIns = new D3Tooltip(container, 'map-tooltip')
 
         const maxData = max(dataset.map((datum: any[]) => datum[geo.dimension]))
@@ -208,26 +252,27 @@ class MapChart extends Histogram {
         //     "#1E7EC8",
         //     "#18669A"
         // ])
-        return xml("../json/southchinasea.svg").then(xmlDocument => {
-            svg.html(function () {
-                return select(this).html() + xmlDocument.getElementsByTagName("g")[0].outerHTML;
-            });
-            const southSea = select("#southsea")
-
-            let southSeaWidth = southSea.node().getBBox().width / 5
-            let southSeaH = southSea!.node().getBBox().height / 5
-            select("#southsea")
-                .classed("southsea", true)
-                .attr("transform", `translate(${grid.width - southSeaWidth - grid.padding.pr},${grid.height - southSeaH - grid.padding.pb}) scale(0.2)`)
-                .attr("fill", "#fafbfc");
-
-            return json('../json/chinawithoutsouthsea.json')
-        })
-            .then(geoJson => {
+        console.log(fsm.state, "-----")
+        if (fsm.state === dimensions[0]) {
+            return xml("../json/southchinasea.svg").then(xmlDocument => {
+                svg.html(function () {
+                    return select(this).html() + xmlDocument.getElementsByTagName("g")[0].outerHTML;
+                });
+                const southSea = select("#southsea")
+    
+                let southSeaWidth = southSea.node().getBBox().width / 5
+                let southSeaH = southSea!.node().getBBox().height / 5
+                select("#southsea")
+                    .classed("southsea", true)
+                    .attr("transform", `translate(${grid.width - southSeaWidth - grid.padding.pr},${grid.height - southSeaH - grid.padding.pb}) scale(0.2)`)
+                    .attr("fill", "#fafbfc");
+    
+                return json('../json/chinawithoutsouthsea.json')
+            }).then(geoJson => {
                 const projection = geoMercator()
                     .fitSize([grid.width, grid.height], geoJson);
                 const path = geoPath().projection(projection);
-
+    
                 const paths = svg
                     .selectAll("path.map")
                     .data(geoJson.features)
@@ -238,22 +283,53 @@ class MapChart extends Histogram {
                     .attr("stroke", "white")
                     .attr("class", "continent")
                     .attr("d", path);
-
+    
                 const t = animationType();
-
+    
                 paths.transition(t)
                     .duration(1000)
                     .attr('fill', (d: any) => {
                         let prov = d.properties.name;
-                        let curProvData = dataset.find((provData: any) => provData['label'] === prov)
-
+                        let curProvData = dataset.find((provData: any) => provData['PROVINCE'] === prov)
+    
                         return color(curProvData ? curProvData[geo.dimension] : 0)
                     });
             });
+        } else {
+            console.log(fsm)
+                return json(`../json/provinces/${fsm[dimensions[0]]}.json`).then(geoJson => {
+                const projection = geoMercator()
+                    .fitSize([grid.width, grid.height], geoJson);
+                const path = geoPath().projection(projection);
+    
+                const paths = svg
+                    .selectAll("path.map")
+                    .data(geoJson.features)
+                    .enter()
+                    .append("path")
+                    .classed("map", true)
+                    .attr("fill", "#fafbfc")
+                    .attr("stroke", "white")
+                    .attr("class", "continent")
+                    .attr("d", path);
+    
+                const t = animationType();
+    
+                paths.transition(t)
+                    .duration(1000)
+                    .attr('fill', (d: any) => {
+                        let prov = d.properties.name;
+                        let curProvData = dataset.find((provData: any) => provData['CITY'] === prov)
+    
+                        return color(curProvData ? curProvData[geo.dimension] : 0)
+                    });
+            });
+        }
+        
 
 
     }
-    private showRect(svg:Selection<any,unknown,any,any>) {
+    private showRect(svg: Selection<any, unknown, any, any>) {
         // 显示渐变矩形条
         const linearGradient = svg.append("defs")
             .append("linearGradient")
@@ -311,7 +387,7 @@ class MapChart extends Histogram {
             curSelect.classed('path-active', true);
 
             let prov = d.properties.name,
-                curData: any[] = dataset.find((provData: any) => provData['label'] === prov)
+                curData: any[] = dataset.find((provData: any) => provData['PROVINCE'] === prov)
 
             let p = clientPoint(this, event);
             tooltip?.updatePosition(p);

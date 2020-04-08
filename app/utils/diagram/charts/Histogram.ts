@@ -14,6 +14,7 @@ abstract class Histogram {
     protected xAxis: any = null   // TODO interface Axis
     protected yAxis: any = null
     protected pieAxis: any = null
+    protected dimensions: string[] = []
     public yAxisBuilder: AxisBuilder | undefined
     public xAxisBuilder: AxisBuilder | undefined
     // TODO 更好的方式?
@@ -23,6 +24,8 @@ abstract class Histogram {
     private defaultOpt: any = {
         dataset: [],
         dimension: [],
+        dimensions: [],
+        measures: [],
         xAxis: {},
         yAxis: {},
         pieAxis: {},
@@ -38,6 +41,9 @@ abstract class Histogram {
         },
         colorPool: []
     }
+    // 
+    public updateData: Function = function(){}
+
     constructor(opt: any) {
         // 通过 opt 对象，初始化 Histogram
 
@@ -54,6 +60,7 @@ abstract class Histogram {
         this.pieAxis = option.pieAxis
         this.geo = option.geo
         this.polar = option.polar
+        this.dimensions = option.dimensions
         // init DataSource
         this.data = new DataSource();
         this.data.dataset = option.dataset
@@ -117,10 +124,7 @@ abstract class Histogram {
     }
     // 在 update*axis 方法之后以及之前执行
     protected resetOffset(opt: any, edgeWidth: number) {
-        console.log(opt.offset)
-        console.log(edgeWidth)
-        console.log("opt offset and edgeWidth")
-        let { offset } = opt
+        // let { offset } = opt
         opt.edgeWidth = edgeWidth
         // opt.offset = offset && offset !== edgeWidth ? offset + edgeWidth : edgeWidth
     }

@@ -11,6 +11,7 @@ class D3Tooltip implements iTooltip {
     private container: Selection<BaseType, unknown, HTMLElement, null>
     private tooltip: Selection<BaseType, unknown, HTMLElement, null>
     private data: any = null;
+    private dimensions: string[] = []
     constructor(container: Selection<BaseType, unknown, HTMLElement, null>,
         className: string | string[] = "") {
         this.container = container;
@@ -67,8 +68,11 @@ class D3Tooltip implements iTooltip {
         //     }
         // }, 50, 100))
     }
+    public setCurDimensions(data:string[]) {
+        this.dimensions = data
+    }
     public setContent(fn: Function) {
-        const content = fn.call(null, this.data)
+        const content = fn.call(null, this.data,this.dimensions)
         this.tooltip.html(content)
 
         this.tooltip

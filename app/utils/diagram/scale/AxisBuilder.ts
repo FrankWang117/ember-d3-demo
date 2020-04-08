@@ -104,13 +104,11 @@ class AxisBuilder {
         // .range(range);
     }
     private setScaleDomain(scale: any, option: any) {
-        console.log(option)
         let range: number[] = [0, 0],
             { padding, width, height } = this.grid,
             { offset,edgeWidth = 0, position, type, min, max, data } = option,
             domain: any[] = [min, max];
 
-        console.log(option.edgeWidth)
         switch (position) {
             case 'bottom':
             case 'top':

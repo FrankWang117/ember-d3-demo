@@ -92,6 +92,7 @@ export default function () {
 							"first Commont", "Second Commont"
 						],
 						dimension: ['phase', 'sales', 'quote', 'rate', 'product'],
+						dimensions: ["YEAR","QUARTER","MONTH"],
 						grid: {
 							width: "auto",
 							height: "auto",
@@ -112,7 +113,7 @@ export default function () {
 							min: 0,
 							max: 0,
 							data: [], // category 必须
-							dimension: "sales",
+							dimension: "SALES_VALUE",
 							ticks: 6,
 							formatter: 's'
 						},
@@ -124,7 +125,7 @@ export default function () {
 							min: 0,
 							max: 0,
 							data: [],
-							dimension: "phase"
+							dimension: "YEAR"
 						}
 					}
 				},
@@ -532,9 +533,8 @@ export default function () {
 			]
 		}
 	});
-	this.get('/southsea', () => {
-		return '..'
-	})
 	this.get('/charts/:id')
 	this.passthrough();
+	this.passthrough("http://192.168.100.29:3000/**",["post"]);
+
 }

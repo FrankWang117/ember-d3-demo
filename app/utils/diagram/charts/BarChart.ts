@@ -1,42 +1,38 @@
 import Histogram from './Histogram';
 import AxisBuilder from '../scale/AxisBuilder';
 import { getAxisSide } from '../scale/axisTransform';
-import { Selection, select, event, clientPoint } from 'd3-selection';
+import { Selection, event, clientPoint } from 'd3-selection';
 import { animationType } from '../animation/animation';
 import D3Tooltip from '../tooltip/Tooltip';
 import { formatLocale, format } from 'd3-format';
 import StateMachine from 'javascript-state-machine';
-import { Promise } from 'rsvp';
+// import fetch from 'fetch';
 
 class BarChart extends Histogram {
     private tooltip: D3Tooltip | undefined
     private fsm: any = null
     private selection: Selection<any, unknown, any, any>
+
     constructor(opt: any) {
         super(opt)
         // 格式化数据 -> 修改为在 queryData 之后格式化 
         // this.dataset = this.parseData(this.data.dataset);
-        // this.fsm = new StateMachine({
-        //     init: 'season',
-        //     transitions: [
-        //         { name: 'downMonth', from: 'season', to: 'month' },
-        //         { name: 'upYear', from: 'month', to: 'year' },
-        //         { name: 'downSeason', from: 'year', to: 'season' }
-        //     ],
-        //     methods: {
-        //         onDownMonth: function () { console.log('season drill down to month') },
-        //         onUpYear: function () { console.log('month scroll up to year') },
-        //         onDownSeason: function () { console.log('year drill down to season') },
-        //         onCondense: function () { console.log('I condensed') }
-        //     }
-        // });
+        let dimensions = this.dimensions,
+            initFsmData = dimensions.reduce((acc: any, cur: string) => {
+                acc[cur] = '';
+                return acc
+            }, {}),
+            transitions = dimensions.map((d: string, i: number, arr: string[]) => {
+                if (i + 1 !== dimensions.length) {
+                    return { name: 'drilldown', from: d, to: arr[i + 1] }
+                }
+                return { name: 'scrollup', from: d, to: arr[0] }
+            });
+
         this.fsm = new StateMachine({
-            init: 'season',
-            transitions: [
-                { name: 'drilldown', from: 'year', to: 'season' },
-                { name: 'drilldown', from: 'season', to: 'month' },
-                { name: 'scrollup', from: 'month', to: 'year' }
-            ]
+            init: dimensions[0],
+            data: initFsmData,
+            transitions
         })
     }
     draw(selection: Selection<any, unknown, any, any>) {
@@ -46,13 +42,15 @@ class BarChart extends Histogram {
         // selection are chart container
         let grid = this.grid,
             svg = selection.append('svg')
-            .attr('width', grid.width)
-            .attr('height', grid.height);
+                .attr('width', grid.width)
+                .attr('height', grid.height);
 
         this.tooltip = new D3Tooltip(selection, 'b-tooltip');
 
         async function flow(this: any) {
-            await this.queryData()
+
+            await this.requeryData(this.updateData)
+            // await this.queryData()
             this.scale(svg);
             // 画 bar
             this.drawBar(svg);
@@ -70,191 +68,38 @@ class BarChart extends Histogram {
         this.draw(selection)
     }
     testInteraction(svg: Selection<any, unknown, any, any>) {
-        let fsm = this.fsm;
         let self = this,
-            selection = this.selection;
+            { fsm, selection, dimensions } = this;
 
-        svg.selectAll('rect').on('click', function () {
-            if (fsm.state === 'month') {
-                fsm.scrollup()
+        svg.selectAll('rect').on('click', function (d: any) {
+
+            // 修改 fsm 的 data-以便获取数据的时候可以得知维度信息
+            if (fsm.state === dimensions[dimensions.length-1]) {
+                // 如果是最后一个维度,则进行清空
+                dimensions.forEach((item:string)=> {
+                    fsm[item] = ''
+                })
+                fsm.scrollup();
             } else {
-                fsm.drilldown()
+                fsm.drilldown();
+                dimensions.forEach((item:string)=> {
+                    fsm[item] = d[item] || fsm[item]
+                })
             }
+            // 修改坐标轴的 dimension 
+            self.xAxis.dimension = fsm.state
+
             self.updateChart(selection);
         })
     }
-    queryData() {
-        let fsm = this.fsm,
-            dimension = fsm.state,
+    async requeryData(fn: Function) {
+        let {fsm,dimensions} = this,
             data = null;
-            
-        return new Promise((resolve, reject) => {
-            resolve('query data')
-        }).then(res => {
-            console.log(res);
-            if (dimension === 'season') {
-                data = [
-                    {
-                        phase: '2018Q1',
-                        sales: 2200000.25,
-                        quote: 2584466.75,
-                        rate: "0.8757",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018Q2',
-                        sales: 2194822.96875,
-                        quote: 2643496,
-                        rate: "0.8303",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018Q3',
-                        sales: 2359731.25,
-                        quote: 2770609.75,
-                        rate: "0.8517",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018Q4',
-                        sales: 2165844.0625,
-                        quote: 2914783.4375,
-                        rate: "0.7431",
-                        product: "all"
-                    },
-                    {
-                        phase: '2019Q1',
-                        sales: 704715.671875,
-                        quote: 2274136,
-                        rate: "0.3099",
-                        product: "all"
-                    },
-                    {
-                        phase: '2019Q2',
-                        sales: 677539.40625,
-                        quote: 2806879,
-                        rate: "0.2414",
-                        product: "all"
-                    },
-                    {
-                        phase: '2019Q3',
-                        sales: 679346.203125,
-                        quote: 2975934,
-                        rate: "0.2283",
-                        product: "all"
-                    }
-                ]
-            } else if (dimension === 'year') {
-                data = [
-                    {
-                        phase: '2018',
-                        sales: 12200000.25,
-                        quote: 12584466.75,
-                        rate: "0.8757",
-                        product: "all"
-                    },
-                    {
-                        phase: '2019',
-                        sales: 21194822.65,
-                        quote: 2643496,
-                        rate: "0.8303",
-                        product: "all"
-                    },
-                    {
-                        phase: '2020',
-                        sales: 22359731.25,
-                        quote: 22770609.75,
-                        rate: "0.8517",
-                        product: "all"
-                    },
-                    {
-                        phase: '2021',
-                        sales: 22165844.15,
-                        quote: 22914783.45,
-                        rate: "0.7431",
-                        product: "all"
-                    }
-                ]
-            } else {
-                data = [
-                    {
-                        phase: '2018M1',
-                        sales: 2200000.25,
-                        quote: 2584466.75,
-                        rate: "0.8757",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M2',
-                        sales: 2194822.96875,
-                        quote: 2643496,
-                        rate: "0.8303",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M3',
-                        sales: 2359731.25,
-                        quote: 2770609.75,
-                        rate: "0.8517",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M4',
-                        sales: 2165844.0625,
-                        quote: 2914783.4375,
-                        rate: "0.7431",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M5',
-                        sales: 704715.671875,
-                        quote: 2274136,
-                        rate: "0.3099",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M6',
-                        sales: 677539.40625,
-                        quote: 2806879,
-                        rate: "0.2414",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M7',
-                        sales: 679346.203125,
-                        quote: 2975934,
-                        rate: "0.2283",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M8',
-                        sales: 679346.203125,
-                        quote: 2975934,
-                        rate: "0.2283",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M9',
-                        sales: 679346.203125,
-                        quote: 2975934,
-                        rate: "0.2283",
-                        product: "all"
-                    },
-                    {
-                        phase: '2018M10',
-                        sales: 679346.203125,
-                        quote: 2975934,
-                        rate: "0.2283",
-                        product: "all"
-                    }
-                ]
-            }
-            return this.parseData(data)
-        }).then(data => {
-            this.dataset = data
-        })
-        // this.dataset = this.parseData(data)
+
+        data = await fn.call(this, fsm, dimensions);
+        this.dataset = this.parseData(data);
     }
+
     scale(svg: Selection<any, unknown, any, any>) {
         // 画轴
         const yAxisIns = this.drawYaxis(svg);
@@ -292,6 +137,7 @@ class BarChart extends Histogram {
     }
     private mouseAction(svg: Selection<any, unknown, any, any>) {
         let { grid, property: p, dataset, tooltip } = this,
+            curDimensions = [this.xAxis.dimension,this.yAxis.dimension],
             { pl, pr } = grid.padding,
             yAxisWidth = getAxisSide(svg.select(`.${this.yAxis.className}`)),
             leftBlank = pl + yAxisWidth;
@@ -331,14 +177,15 @@ class BarChart extends Histogram {
             let p = clientPoint(this, event);
             tooltip?.updatePosition(p);
             tooltip?.setCurData(curData);
-            tooltip?.setContent(function (data: any) {
+            tooltip?.setCurDimensions(curDimensions)
+            tooltip?.setContent(function (data: any,dimensions:string[]) {
                 if (!data) {
-                    return `<p>本市场暂无数据</p>`
+                    return `<p>本产品 - ${data['PRODUCT_NAME']}暂无数据</p>`
                 }
-                return `
-                        <p>${ data['phase']} 市场概况</p>
-                        <p>市场规模${formatLocale("thousands").format("~s")(data['quote'])}</p>
-                        <p>sales ${format(".2%")(data['sales'])}</p>`
+                return `<p>${ data[dimensions[0]]} </p>
+                        <!-- <p>市场规模${formatLocale("thousands").format("~s")(data['quote'])}</p> -->
+                        <!-- <p>比例 ${format(".2%")(data[dimensions[1]])}</p> -->
+                        <p>市场规模 ${formatLocale("thousands").format("~s")(data[dimensions[1]])}</p>`
             })
             tooltip?.show();
         })

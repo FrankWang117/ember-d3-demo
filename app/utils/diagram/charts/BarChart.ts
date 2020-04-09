@@ -6,12 +6,11 @@ import { animationType } from '../animation/animation';
 import D3Tooltip from '../tooltip/Tooltip';
 import { formatLocale, format } from 'd3-format';
 import StateMachine from 'javascript-state-machine';
-// import fetch from 'fetch';
 
 class BarChart extends Histogram {
-    private tooltip: D3Tooltip | undefined 
+    // private tooltip: D3Tooltip | undefined 
     private fsm: any = null
-    private selection: Selection<any, unknown, any, any>
+    protected selection: Selection<any, unknown, any, any>
 
     constructor(opt: any) {
         super(opt)

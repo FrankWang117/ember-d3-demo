@@ -19,7 +19,10 @@ export default class Diagram extends Component<DiagramArgs> {
         let container = select(`#${this.args.chart.id}`),
             comp = '信立泰',
             prov = '广东',
-            prod = '波立维片剂75MG7赛诺菲-安万特制药有限公司';
+            prod = '波立维片剂75MG7赛诺菲-安万特制药有限公司',
+            year = 2019,
+            quarter = 1,
+            month = 1;
 
         console.log("ready to draw chart");
         // 必须在draw 执行之前重设 updateData 的方法
@@ -53,9 +56,10 @@ export default class Diagram extends Component<DiagramArgs> {
                 }
                 break;
             case 'MapChart':
+            case 'ScatterChart':
                 histogram.updateData = function (fsm: any, dimensions: string[]) {
                     return new Promise((resolve) => {
-                        console.log(fsm)
+                        console.log(fsm.state)
                         let state = fsm.state,
                             sqlDimensions = dimensions.map(item => {
                                 if (fsm[item]) {
@@ -64,24 +68,25 @@ export default class Diagram extends Component<DiagramArgs> {
                                 return ''
                             })
                         // TODO 内部具体动作应该提出到组件或者路由中操作
-                        if(state == "PROVINCE") {
+                        if (state == "PROVINCE") {
                             resolve(fetch("http://192.168.100.29:3000/sql?tag=listMap", {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({ "sql": `SELECT PROVINCE, SALES_VALUE, SALES_QTY FROM fullcube2 WHERE MKT IN (SELECT MKT FROM fullcube2 WHERE DIMENSION_NAME.keyword = '2-time-prod' AND DIMENSION_VALUE.keyword = 'MONTH-PRODUCT_NAME' AND COMPANY.keyword = 'Sankyo' AND YEAR = 2019 AND QUARTER = 1 AND MONTH = 1 AND PRODUCT_NAME = '立普妥') AND DIMENSION_NAME.keyword = '3-time-geo-prod' AND DIMENSION_VALUE.keyword = 'MONTH-PROVINCE-MKT' AND COMPANY.keyword = 'Sankyo' AND YEAR = 2019 AND QUARTER = 1 AND MONTH = 1 AND COUNTRY.keyword = 'CHINA'` }),
+                                body: JSON.stringify({ "sql": `SELECT ${state}, SALES_VALUE, SALES_QTY FROM fullcube2 WHERE MKT IN (SELECT MKT FROM fullcube2 WHERE DIMENSION_NAME.keyword = '2-time-prod' AND DIMENSION_VALUE.keyword = 'MONTH-PRODUCT_NAME' AND COMPANY.keyword = '${comp}' AND YEAR = ${year} AND QUARTER = ${quarter} AND MONTH = ${month} AND PRODUCT_NAME = '${prod}') AND DIMENSION_NAME.keyword = '3-time-geo-prod' AND DIMENSION_VALUE.keyword = 'MONTH-${state}-MKT' AND COMPANY.keyword = '${comp}' AND YEAR = ${year} AND QUARTER = ${quarter} AND MONTH = ${month} AND COUNTRY.keyword = 'CHINA'` }),
                             }))
-                        } else if(state === 'CITY') {
+                        } else if (state === 'CITY') {
+                            console.log(fsm[dimensions[0]])
+                            let prov = fsm[dimensions[0]]
                             resolve(fetch("http://192.168.100.29:3000/sql?tag=listMap", {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({ "sql": `SELECT CITY, SALES_VALUE, SALES_QTY FROM fullcube2 WHERE MKT IN (SELECT MKT FROM fullcube2 WHERE DIMENSION_NAME.keyword = '2-time-prod' AND DIMENSION_VALUE.keyword = 'MONTH-PRODUCT_NAME' AND COMPANY.keyword = 'Sankyo' AND YEAR = 2019 AND QUARTER = 1 AND MONTH = 1 AND PRODUCT_NAME = '立普妥') AND DIMENSION_NAME.keyword = '3-time-geo-prod' AND DIMENSION_VALUE.keyword = 'MONTH-CITY-MKT' AND COMPANY.keyword = 'Sankyo' AND YEAR = 2019 AND QUARTER = 1 AND MONTH = 1 AND PROVINCE.keyword like '广东%'` }),
+                                body: JSON.stringify({ "sql": `SELECT ${state}, SALES_VALUE, SALES_QTY FROM fullcube2 WHERE MKT IN (SELECT MKT FROM fullcube2 WHERE DIMENSION_NAME.keyword = '2-time-prod' AND DIMENSION_VALUE.keyword = 'MONTH-PRODUCT_NAME' AND COMPANY.keyword = '${comp}' AND YEAR = ${year} AND QUARTER = ${quarter} AND MONTH = ${month} AND PRODUCT_NAME = '${prod}') AND DIMENSION_NAME.keyword = '3-time-geo-prod' AND DIMENSION_VALUE.keyword = 'MONTH-${state}-MKT' AND COMPANY.keyword = '${comp}' AND YEAR = ${year} AND QUARTER = ${quarter} AND MONTH = ${month} AND PROVINCE.keyword like '${prov}%'` }),
                             }))
                         }
-                        
                     }).then((result: any) => {
                         return result.json();
                     }).then(data => {
@@ -89,6 +94,32 @@ export default class Diagram extends Component<DiagramArgs> {
                         return data
                     })
                 }
+                break;
+            case 'StackChart':
+                // histogram.updateData = function (fsm: any, dimensions: string[]) {
+                //     return new Promise((resolve) => {
+                //         let state = fsm.state,
+                //             sqlDimensions = dimensions.map(item => {
+                //                 if (fsm[item]) {
+                //                     return `AND ${item}.keyword = '${fsm[item]}'`
+                //                 }
+                //                 return ''
+                //             })
+                //         // TODO 内部具体动作应该提出到组件或者路由中操作
+
+                //         resolve(fetch("http://192.168.100.29:3000/sql?tag=listMap", {
+                //             method: 'POST',
+                //             headers: {
+                //                 'Content-Type': 'application/json'
+                //             },
+                //             body: JSON.stringify({ "sql": `SELECT ${state}, PRODUCT_NAME, SALES_VALUE FROM fullcube2 WHERE DIMENSION_NAME.keyword = '3-time-geo-prod' AND DIMENSION_VALUE.keyword = '${state}-PROVINCE-PRODUCT_NAME' ${sqlDimensions.join(" ")} AND COMPANY = '${comp}' AND PROVINCE = '${prov}' AND PRODUCT_NAME.keyword = '${prod}'  ORDER BY ${state}.keyword` }),
+                //         }))
+                //     }).then((result: any) => {
+                //         return result.json();
+                //     }).then(data => {
+                //         return data
+                //     })
+                // }
                 break;
             default:
                 break;

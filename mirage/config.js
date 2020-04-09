@@ -92,7 +92,7 @@ export default function () {
 							"first Commont", "Second Commont"
 						],
 						dimension: ['phase', 'sales', 'quote', 'rate', 'product'],
-						dimensions: ["YEAR","QUARTER","MONTH"],
+						dimensions: ["YEAR", "QUARTER", "MONTH"],
 						grid: {
 							width: "auto",
 							height: "auto",
@@ -380,7 +380,7 @@ export default function () {
 							"first Commont", "Second Commont"
 						],
 						dimension: ['label', 'sales', 'quote', 'rate', 'product'],
-						dimensions: ['PROVINCE',"CITY"],
+						dimensions: ['PROVINCE', "CITY"],
 						grid: {
 							width: "auto",
 							height: "auto",
@@ -531,11 +531,118 @@ export default function () {
 						}
 					}
 				},
+				{
+					id: "scatter-test-2020-04-09",
+					type: "charts",
+					attributes: {
+						title: "地区销售指标与销售额变化",
+						type: "scatter",
+						commonts: [
+							"first Commont", "Second Commont"
+						],
+						dimension: ['area', 'SALES_QTY', 'SALES_VALUES', 'sales'],
+						dimensions: ['PROVINCE','CITY'],
+						grid: {
+							width: "auto",
+							height: "auto",
+							padding: {
+								top: 24,
+								right: 24,
+								bottom: 24,
+								left: 24
+							},
+							bgColor: 'transparent'
+						},
+						colorPool: ["#E7F0FE", "#B8D4FA", "#8ABCF4", "#5CA6EF",
+							"#3492E5",
+							"#1E7EC8",
+							"#18669A"],
+						yAxis: {
+							className: 'y-axis',
+							position: 'left',
+							offset: 0,
+							type: 'value',
+							min: 0,
+							max: 0,
+							data: [], // category 必须
+							dimension: 'SALES_VALUE',
+							formatter: ''
+						},
+						xAxis: {
+							className: 'x-axis',
+							position: 'bottom',
+							offset: 0,
+							type: 'value',
+							min: 0,
+							max: 0,
+							data: [],
+							dimension: "SALES_QTY",
+							formatter: ''
+						},
+						polar: {
+							dimension: 'SALES_VALUE'
+						}
+					}
+				},
+				{
+					id: "stack-test-2020-04-09",
+					type: "charts",
+					attributes: {
+						title: "某市场产品对比",
+						type: "stack",
+						dataset: [
+							{ YEAR: new Date(2015, 0, 1), apples: 3840, bananas: 1920, cherries: 960, oranges: 400 },
+							{ YEAR: new Date(2015, 1, 1), apples: 1600, bananas: 1440, cherries: 960, oranges: 400 },
+							{ YEAR: new Date(2015, 2, 1), apples: 640, bananas: 960, cherries: 640, oranges: 400 },
+							{ YEAR: new Date(2015, 3, 1), apples: 320, bananas: 480, cherries: 640, oranges: 400 }
+						],
+						commonts: [
+							"first Commont", "Second Commont"
+						],
+						dimension: ['month', 'apples', 'bananas', 'cherries', 'oranges'],
+						dimensions: ['YEAR','QUARTER','MONTH'],
+						grid: {
+							width: "auto",
+							height: "auto",
+							padding: {
+								top: 24,
+								right: 24,
+								bottom: 24,
+								left: 24
+							},
+							bgColor: 'transparent'
+						},
+						colorPool: ["#E7F0FE", "#B8D4FA", "#8ABCF4", "#5CA6EF",
+							"#3492E5",
+							"#1E7EC8",
+							"#18669A"],
+						yAxis: {
+							className: 'y-axis',
+							position: 'left',
+							offset: 0,
+							type: 'value',
+							min: 0,
+							max: 0,
+							data: [], // category 必须
+							dimension: ['apples', 'bananas', 'cherries', 'oranges']
+						},
+						xAxis: {
+							className: 'x-axis',
+							position: 'bottom',
+							offset: 0,
+							type: 'time',
+							min: 0,
+							max: 0,
+							data: [],
+							dimension: "YEAR"
+						}
+					}
+				},
 			]
 		}
 	});
 	this.get('/charts/:id')
 	this.passthrough();
-	this.passthrough("http://192.168.100.29:3000/**",["post"]);
+	this.passthrough("http://192.168.100.29:3000/**", ["post"]);
 
 }

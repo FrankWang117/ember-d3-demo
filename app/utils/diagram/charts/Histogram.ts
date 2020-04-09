@@ -45,8 +45,9 @@ abstract class Histogram {
     // 
     public updateData: Function = function(){}
     // tooltip instance
-    private tooltip: D3Tooltip | undefined = undefined
-
+    protected tooltip: D3Tooltip | undefined = undefined
+    protected selection: Selection<any,unknown,any,any> 
+    
     constructor(opt: any) {
         // 通过 opt 对象，初始化 Histogram
 
@@ -85,6 +86,7 @@ abstract class Histogram {
         }
     }
     public draw(selection: Selection<any, unknown, any, any>) {
+        this.selection = selection
         this.resetSize(selection);
     }
     protected resetSize(selection: Selection<any, unknown, any, any>) {

@@ -9,20 +9,68 @@ import StateMachine from 'javascript-state-machine';
 import D3Tooltip from '../tooltip/Tooltip';
 import { formatLocale, format } from 'd3-format';
 
+/**
+ * data format
+    [
+        {
+            label: '山东省',
+            sales: 22000.25,
+            quote: 2584466.75,
+            rate: "0.8757",
+            product: "all"
+        },
+        {
+            label: '广东省',
+            sales: 2194822.975,
+            quote: 2643496,
+            rate: "0.8303",
+            product: "all"
+        },
+        {
+            label: '北京市',
+            sales: 2359731.25,
+            quote: 2770609.75,
+            rate: "0.8517",
+            product: "all"
+        },
+        {
+            label: '陕西省',
+            sales: 2165844.0625,
+            quote: 2914783.4375,
+            rate: "0.7431",
+            product: "all"
+        },
+        {
+            label: '吉林省',
+            sales: 704715.671875,
+            quote: 2274136,
+            rate: "0.3099",
+            product: "all"
+        },
+        {
+            label: '广西壮族自治区',
+            sales: 677539.40625,
+            quote: 2806879,
+            rate: "0.2414",
+            product: "all"
+        },
+        {
+            label: '内蒙古自治区',
+            sales: 679346.203125,
+            quote: 2975934,
+            rate: "0.2283",
+            product: "all"
+        }
+    ]
+ */
 class MapChart extends Histogram {
     private fsm: any = null
-    private tooltip: D3Tooltip | undefined
+    // private tooltip: D3Tooltip | undefined
     private selection: Selection<any, unknown, any, any>
+
     constructor(opt: any) {
-        super(opt)
-        // this.dataset = this.parseData(this.data.dataset);
-        // this.fsm = new StateMachine({
-        //     init: 'china',
-        //     transitions: [
-        //         { name: 'drilldown', from: 'china', to: 'province' },
-        //         { name: 'rollup', from: 'province', to: 'china' }
-        //     ]
-        // })
+        super(opt);
+
         let dimensions = this.dimensions,
             initFsmData = dimensions.reduce((acc: any, cur: string) => {
                 acc[cur] = '';
@@ -81,15 +129,30 @@ class MapChart extends Histogram {
         this.dataset = this.parseData(data);
     }
     testInteraction(svg: Selection<any, unknown, any, any>) {
-        let { fsm, selection, dimensions, dataset} = this;
+        let { fsm, selection, dimensions, dataset } = this;
         let self = this;
 
         svg.selectAll('path').on('click', function (d: any) {
             let prov = d.properties.name,
-            curData: any = dataset.find((provData: any) => provData[fsm.state] === prov);
+                curData: any = dataset.find((provData: any) => prov.includes(provData[fsm.state]));
 
-            console.log(prov)
-            console.log(curData)
+            if (fsm.state === dimensions[dimensions.length - 1] || !curData) {
+                // TODO 当当前省份无数据时,进行 rollup 就出现错误,但是可以忽略
+                // 如果是最后一个维度,则进行清空
+                dimensions.forEach((item: string) => {
+                    fsm[item] = ''
+                })
+                fsm.rollup();
+                self.updateChart(selection);
+
+            } else {
+                fsm.drilldown();
+                dimensions.forEach((item: string) => {
+                    fsm[item] = curData[item] || fsm[item]
+                })
+                self.updateChart(selection);
+
+            }
             // if (fsm.state === 'province') {
             //     fsm.scrollup()
             // } else {
@@ -97,146 +160,13 @@ class MapChart extends Histogram {
             // }
             // self.updateChart(selection);
             // 修改 fsm 的 data-以便获取数据的时候可以得知维度信息
-            if (fsm.state === dimensions[dimensions.length - 1]) {
-                // 如果是最后一个维度,则进行清空
-                dimensions.forEach((item: string) => {
-                    fsm[item] = ''
-                })
-                fsm.rollup();
-            } else {
-                fsm.drilldown();
-                dimensions.forEach((item: string) => {
-                    fsm[item] = curData[item] || fsm[item]
-                })
-            }
+
             // 修改坐标轴的 dimension 
             // self.geo.dimension = fsm.state
 
-            self.updateChart(selection);
         })
     }
-
-    queryData() {
-        let fsm = this.fsm,
-            dimension = fsm.state,
-            data: any[] = [];
-
-        return new Promise((resolve, reject) => {
-            resolve('query data')
-        }).then(res => {
-            console.log(res);
-            if (dimension === 'china') {
-                data = [
-                    {
-                        label: '山东省',
-                        sales: 22000.25,
-                        quote: 2584466.75,
-                        rate: "0.8757",
-                        product: "all"
-                    },
-                    {
-                        label: '广东省',
-                        sales: 2194822.975,
-                        quote: 2643496,
-                        rate: "0.8303",
-                        product: "all"
-                    },
-                    {
-                        label: '北京市',
-                        sales: 2359731.25,
-                        quote: 2770609.75,
-                        rate: "0.8517",
-                        product: "all"
-                    },
-                    {
-                        label: '陕西省',
-                        sales: 2165844.0625,
-                        quote: 2914783.4375,
-                        rate: "0.7431",
-                        product: "all"
-                    },
-                    {
-                        label: '吉林省',
-                        sales: 704715.671875,
-                        quote: 2274136,
-                        rate: "0.3099",
-                        product: "all"
-                    },
-                    {
-                        label: '广西壮族自治区',
-                        sales: 677539.40625,
-                        quote: 2806879,
-                        rate: "0.2414",
-                        product: "all"
-                    },
-                    {
-                        label: '内蒙古自治区',
-                        sales: 679346.203125,
-                        quote: 2975934,
-                        rate: "0.2283",
-                        product: "all"
-                    }
-                ]
-            } else if (dimension === 'province') {
-                data = [
-                    {
-                        label: '济南市',
-                        sales: 2000.25,
-                        quote: 258466.75,
-                        rate: "0.18757",
-                        product: "all"
-                    },
-                    {
-                        label: '济宁市',
-                        sales: 214822.975,
-                        quote: 243496,
-                        rate: "0.303",
-                        product: "all"
-                    },
-                    {
-                        label: '青岛市',
-                        sales: 259731.25,
-                        quote: 270609.75,
-                        rate: "0.517",
-                        product: "all"
-                    },
-                    {
-                        label: '烟台市',
-                        sales: 165844.0625,
-                        quote: 914783.4375,
-                        rate: "0.431",
-                        product: "all"
-                    },
-                    {
-                        label: '聊城市',
-                        sales: 4715.75,
-                        quote: 274136,
-                        rate: "0.3099",
-                        product: "all"
-                    },
-                    {
-                        label: '枣庄市',
-                        sales: 77539.25,
-                        quote: 806879,
-                        rate: "0.14",
-                        product: "all"
-                    },
-                    {
-                        label: '潍坊市',
-                        sales: 79346.2,
-                        quote: 275934,
-                        rate: "0.2283",
-                        product: "all"
-                    }
-                ]
-            }
-            return this.parseData(data)
-        }).then(data => {
-            this.dataset = data
-        })
-
-        // this.dataset = this.parseData(data)
-    }
+    
     private drawMap(svg: Selection<any, unknown, any, any>) {
         let { grid, property: p, geo, dataset, fsm, dimensions } = this;
         // const tooltipIns = new D3Tooltip(container, 'map-tooltip')
@@ -252,27 +182,26 @@ class MapChart extends Histogram {
         //     "#1E7EC8",
         //     "#18669A"
         // ])
-        console.log(fsm.state, "-----")
         if (fsm.state === dimensions[0]) {
             return xml("../json/southchinasea.svg").then(xmlDocument => {
                 svg.html(function () {
                     return select(this).html() + xmlDocument.getElementsByTagName("g")[0].outerHTML;
                 });
                 const southSea = select("#southsea")
-    
+
                 let southSeaWidth = southSea.node().getBBox().width / 5
                 let southSeaH = southSea!.node().getBBox().height / 5
                 select("#southsea")
                     .classed("southsea", true)
                     .attr("transform", `translate(${grid.width - southSeaWidth - grid.padding.pr},${grid.height - southSeaH - grid.padding.pb}) scale(0.2)`)
                     .attr("fill", "#fafbfc");
-    
+
                 return json('../json/chinawithoutsouthsea.json')
             }).then(geoJson => {
                 const projection = geoMercator()
                     .fitSize([grid.width, grid.height], geoJson);
                 const path = geoPath().projection(projection);
-    
+
                 const paths = svg
                     .selectAll("path.map")
                     .data(geoJson.features)
@@ -283,25 +212,24 @@ class MapChart extends Histogram {
                     .attr("stroke", "white")
                     .attr("class", "continent")
                     .attr("d", path);
-    
+
                 const t = animationType();
-    
+
                 paths.transition(t)
                     .duration(1000)
                     .attr('fill', (d: any) => {
                         let prov = d.properties.name;
-                        let curProvData = dataset.find((provData: any) => provData['PROVINCE'] === prov)
-    
+                        let curProvData = dataset.find((provData: any) => prov.includes(provData['PROVINCE']))
+
                         return color(curProvData ? curProvData[geo.dimension] : 0)
                     });
             });
         } else {
-            console.log(fsm)
-                return json(`../json/provinces/${fsm[dimensions[0]]}.json`).then(geoJson => {
+            return json(`../json/provinces/${fsm[dimensions[0]]}.json`).then(geoJson => {
                 const projection = geoMercator()
                     .fitSize([grid.width, grid.height], geoJson);
                 const path = geoPath().projection(projection);
-    
+
                 const paths = svg
                     .selectAll("path.map")
                     .data(geoJson.features)
@@ -312,20 +240,20 @@ class MapChart extends Histogram {
                     .attr("stroke", "white")
                     .attr("class", "continent")
                     .attr("d", path);
-    
+
                 const t = animationType();
-    
+
                 paths.transition(t)
                     .duration(1000)
                     .attr('fill', (d: any) => {
                         let prov = d.properties.name;
-                        let curProvData = dataset.find((provData: any) => provData['CITY'] === prov)
-    
+                        let curProvData = dataset.find((provData: any) => prov.includes(provData['CITY']))
+
                         return color(curProvData ? curProvData[geo.dimension] : 0)
                     });
             });
         }
-        
+
 
 
     }
@@ -379,27 +307,31 @@ class MapChart extends Histogram {
         //     .classed("linear-text", true)
     }
     private mouseAction(svg: Selection<any, unknown, any, any>) {
-        let { grid, property: p, dataset, tooltip } = this,
+        let { grid, property: p, dataset, tooltip, fsm } = this,
             { pl, pr } = grid.padding,
-            leftBlank = pl;
+            leftBlank = pl,
+            curDimensions = [fsm.state];
+
         svg.selectAll("path").on('mousemove', function (d: any) {
             const curSelect = select(this);
             curSelect.classed('path-active', true);
 
             let prov = d.properties.name,
-                curData: any[] = dataset.find((provData: any) => provData['PROVINCE'] === prov)
+                curData: any[] = dataset.find((provData: any) => prov.includes(provData[curDimensions[0]]) )
 
             let p = clientPoint(this, event);
             tooltip?.updatePosition(p);
             tooltip?.setCurData(curData);
-            tooltip?.setContent(function (data: any) {
+            tooltip?.setCurDimensions(curDimensions)
+            tooltip?.setContent(function (data: any, dimensions: string[]) {
                 if (!data) {
                     return `<p>本市场暂无数据</p>`
                 }
                 return `
-                        <p>${ data['label']} 市场概况</p>
-                        <p>市场规模${formatLocale("thousands").format("~s")(data['quote'])}</p>
-                        <p>sales ${format(".2%")(data['sales'])}</p>`
+                        <p>${ data[dimensions[0]]} 市场概况</p>
+                        <p>市场规模${formatLocale("thousands").format("~s")(data['SALES_QTY'])}</p>
+                        <p>销售额 ${formatLocale("thousands").format("~s")(data['SALES_VALUE'])}</p>
+                        <!-- <p>sales ${format(".2%")(data['sales'])}</p> -->`
             })
             tooltip?.show();
         })

@@ -8,6 +8,7 @@ import { timeMonth } from 'd3-time';
 import { min, max } from 'd3-array';
 import StateMachine from 'javascript-state-machine';
 import D3Tooltip from '../tooltip/Tooltip';
+import { formatLocale, format } from 'd3-format';
 
 class StackChart extends Histogram {
     private fsm: any = null
@@ -50,6 +51,7 @@ class StackChart extends Histogram {
         this.tooltip = new D3Tooltip(selection, 'b-tooltip');
 
         async function flow(this: any) {
+            
             await this.requeryData(this.updateData)
             // await this.queryData()
             this.scale(svg);
@@ -68,6 +70,32 @@ class StackChart extends Histogram {
 
         data = await fn.call(this, fsm, dimensions);
         this.dataset = this.parseData(data);
+    }
+    testInteraction(svg: Selection<any, unknown, any, any>) {
+        let self = this,
+            { fsm, selection, dimensions } = this;
+
+        svg.selectAll('rect').on('click', function (d: any) {
+
+            // 修改 fsm 的 data-以便获取数据的时候可以得知维度信息
+            if (fsm.state === dimensions[dimensions.length-1]) {
+                // 如果是最后一个维度,则进行清空
+                dimensions.forEach((item:string)=> {
+                    fsm[item] = ''
+                })
+                fsm.rollup();
+            } else {
+                fsm.drilldown();
+                dimensions.forEach((item:string)=> {
+                    console.log(d.data[item])
+                    fsm[item] = d.data[item] || fsm[item]
+                })
+            }
+            // 修改坐标轴的 dimension 
+            self.xAxis.dimension = fsm.state
+
+            self.updateChart(selection);
+        })
     }
     scale(svg: Selection<any, unknown, any, any>) {
         // 画轴
@@ -120,7 +148,10 @@ class StackChart extends Histogram {
                 exit => exit.remove()
             )
             .attr('x', (d: any) => {
-                return xScale(new Date(d.data[this.xAxis.dimension]))
+                console.log(d.data)
+                console.log(this.xAxis.dimension)
+                // return xScale(new Date(d.data[this.xAxis.dimension]))
+                return xScale(d.data[this.xAxis.dimension]) + xScale.bandwidth() / 2
             })
             .attr('y', (d: any) => yScale(d[1]))
             .attr('height', (d: any) => yScale(d[0]) - yScale(d[1]))
@@ -135,17 +166,31 @@ class StackChart extends Histogram {
             }
         }
     }
-    protected calcXaxisData() {
-        let originData = this.data.dataset
-        const timeDate = originData.map(datum => new Date(datum[this.xAxis.dimension]));
+    // protected calcXaxisData() {
+    //     let originData = this.data.dataset
+    //     const timeDate = originData.map(datum => new Date(datum[this.xAxis.dimension]));
 
-        // 为了给两端留出空白区域
-        const phMinDate = timeMonth.offset(<Date>min(timeDate), -1);
-        const phMaxDate = timeMonth.offset(<Date>max(timeDate), 1);
+    //     // 为了给两端留出空白区域
+    //     const phMinDate = timeMonth.offset(<Date>min(timeDate), -1);
+    //     const phMaxDate = timeMonth.offset(<Date>max(timeDate), 1);
+    //     this.xAxis = {
+    //         ...this.xAxis, ...{
+    //             min: phMinDate,
+    //             max: phMaxDate,
+    //         }
+    //     }
+    // }
+    protected calcXaxisData() {
+        console.log(this.dataset)
+        console.log(this.dataset[0].map((item:any)=> {
+            return item.data[this.fsm.state]
+        }))
+
         this.xAxis = {
             ...this.xAxis, ...{
-                min: phMinDate,
-                max: phMaxDate,
+                data: this.dataset[0].map((item:any)=> {
+                    return item.data[this.fsm.state]
+                }),
             }
         }
     }

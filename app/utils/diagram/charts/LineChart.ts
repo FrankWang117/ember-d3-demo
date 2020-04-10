@@ -1,16 +1,40 @@
 import Histogram from './Histogram';
-import { Selection } from 'd3-selection';
+import { Selection, event, clientPoint } from 'd3-selection';
 import { getAxisSide } from '../scale/axisTransform';
 import { flatDeep } from '../data/FlatDeep';
 import { animationType, tweenDash } from '../animation/animation';
 import { max } from 'd3-array';
 import AxisBuilder from '../scale/AxisBuilder';
 import { line, curveCatmullRom } from 'd3-shape';
+import StateMachine from 'javascript-state-machine';
+import D3Tooltip from '../tooltip/Tooltip';
+import { formatLocale, format } from 'd3-format';
 
 class LineChart extends Histogram {
+    private fsm: any = null
+    protected selection: Selection<any, unknown, any, any>
+
     constructor(opt: any) {
         super(opt)
-        this.dataset = this.parseData(this.data.dataset)
+        // 格式化数据 -> 修改为在 queryData 之后格式化 
+        // this.dataset = this.parseData(this.data.dataset);
+        let dimensions = this.dimensions,
+            initFsmData = dimensions.reduce((acc: any, cur: string) => {
+                acc[cur] = '';
+                return acc;
+            }, {}),
+            transitions = dimensions.map((d: string, i: number, arr: string[]) => {
+                if (i + 1 !== dimensions.length) {
+                    return { name: 'drilldown', from: d, to: arr[i + 1] }
+                }
+                return { name: 'rollup', from: d, to: arr[0] }
+            });
+
+        this.fsm = new StateMachine({
+            init: dimensions[0],
+            data: initFsmData,
+            transitions
+        })
     }
     draw(selection: any) {
         // selection are chart container
@@ -21,9 +45,55 @@ class LineChart extends Histogram {
             .attr('width', grid.width)
             .attr('height', grid.height)
 
-        this.scale(svg);
-        this.drawLines(svg)
-        
+        // this.scale(svg);
+        // this.drawLines(svg)
+        this.tooltip = new D3Tooltip(selection, 'b-tooltip');
+
+        async function flow(this: any) {
+            await this.requeryData(this.updateData)
+            // await this.queryData()
+            this.scale(svg);
+            // 画 bar
+            this.drawLines(svg);
+            // 添加交互
+            this.mouseAction(svg);
+            // 测试交互
+            this.testInteraction(svg);
+        }
+        flow.call(this)
+
+    }
+    async requeryData(fn: Function) {
+        let { fsm, dimensions } = this,
+            data = null;
+
+        data = await fn.call(this, fsm, dimensions);
+        this.dataset = this.parseData(data);
+    }
+    testInteraction(svg: Selection<any, unknown, any, any>) {
+        let self = this,
+            { fsm, selection, dimensions } = this;
+
+        svg.selectAll('circle').on('click', function (d: any) {
+
+            // 修改 fsm 的 data-以便获取数据的时候可以得知维度信息
+            if (fsm.state === dimensions[dimensions.length - 1]) {
+                // 如果是最后一个维度,则进行清空
+                dimensions.forEach((item: string) => {
+                    fsm[item] = ''
+                })
+                fsm.rollup();
+            } else {
+                fsm.drilldown();
+                dimensions.forEach((item: string) => {
+                    fsm[item] = d[item] || fsm[item]
+                })
+            }
+            // 修改坐标轴的 dimension 
+            self.xAxis.dimension = fsm.state
+
+            self.updateChart(selection);
+        })
     }
     scale(svg: Selection<any, unknown, any, any>) {
         // 画轴
@@ -58,7 +128,7 @@ class LineChart extends Histogram {
                 .attr("d", lineLayout)
                 .attr('fill', 'none')
                 .attr('stroke-width', 2)
-                .attr('stroke', '#FFAB00');
+                .attr('stroke', () => p.colorPool[index].HEX());
             // 添加初始动画
             const t = animationType();
 
@@ -83,15 +153,15 @@ class LineChart extends Histogram {
                 .append('circle')
                 .classed("outer-circle", true)
                 .attr('r', 3)
-                .attr('stroke', '#FFAB00')
+                .attr('stroke', () => p.colorPool[index].HEX())
                 .attr('fill', 'white');
 
             combCirle
                 .append('circle')
                 .classed("inner-circle", true)
                 .attr('r', 1)
-                .attr('stroke', '#FFAB00')
-                .attr('fill', '#FFAB00');
+                .attr('stroke', () => p.colorPool[index].HEX())
+                .attr('fill', () => p.colorPool[index].HEX());
             // combCirle
             //     .on('mouseover', function (d: any) {
             //         circleChange(select(this).select('.outer-circle'), 6)
@@ -119,6 +189,7 @@ class LineChart extends Histogram {
     // 这个需要根据 x 轴 / y 轴展示的数据进行修改
     protected calcXaxisData() {
         // default xAxis type category
+        
         this.xAxis = {
             ...this.xAxis, ...{
                 data: this.dataset[0].map((datum: any) => datum[this.xAxis.dimension]),
@@ -133,6 +204,44 @@ class LineChart extends Histogram {
                 max: max(flatData.map(datum => datum[this.yAxis.dimension])),
             }
         }
+    }
+
+    private mouseAction(svg: Selection<any, unknown, any, any>) {
+        let { grid, property: p, dataset, tooltip } = this,
+            curDimensions = [this.xAxis.dimension, this.yAxis.dimension],
+            { pl, pr } = grid.padding,
+            yAxisWidth = getAxisSide(svg.select(`.${this.yAxis.className}`)),
+            leftBlank = pl + yAxisWidth;
+
+        svg.on('mousemove', function () {
+            let eachSpackWidth = (grid.width - leftBlank - pr) / dataset.length,
+                arr = dataset.map((_item, i) => i * eachSpackWidth),
+                curPoint = event.offsetX - leftBlank,
+                count = arr.findIndex((item, i) => item <= curPoint && arr[i + 1] >= curPoint);
+
+            count = count < 0 ? dataset.length - 1 : count;
+
+            let curData = dataset[Math.round(count)];
+            let p = clientPoint(this, event);
+            tooltip?.updatePosition(p);
+            tooltip?.setCurData(curData);
+            tooltip?.setCurDimensions(curDimensions)
+            tooltip?.setContent(function (data: any, dimensions: string[]) {
+                console.log(data)
+                console.log(dimensions)
+                if (!data) {
+                    return `<p>本产品 - ${data['PRODUCT_NAME']}暂无数据</p>`
+                }
+                return `<p>${data[dimensions[0]]} </p>
+                        <!-- <p>市场规模${formatLocale("thousands").format("~s")(data['quote'])}</p> -->
+                        <!-- <p>比例 ${format(".2%")(data[dimensions[1]])}</p> -->
+                        <p>市场规模 ${formatLocale("thousands").format("~s")(data[dimensions[1]])}</p>`
+            })
+            tooltip?.show();
+        })
+        svg.on('mouseout', function () {
+            tooltip?.hidden()
+        })
     }
 }
 export default LineChart;

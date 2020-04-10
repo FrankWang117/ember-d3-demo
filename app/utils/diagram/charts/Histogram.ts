@@ -23,6 +23,7 @@ abstract class Histogram {
     protected geo: any = null
     protected polar: any = null
     private defaultOpt: any = {
+        id: '',
         dataset: [],
         dimension: [],
         dimensions: [],
@@ -42,6 +43,7 @@ abstract class Histogram {
         },
         colorPool: []
     }
+    public option: any = null
     // 
     public updateData: Function = function(){}
     // tooltip instance
@@ -57,8 +59,8 @@ abstract class Histogram {
                 option[item] = opt[item] || option[item]
             }
         }
+        this.option = option
         // opt = {...this.defaultOpt,...opt}
-
         this.xAxis = option.xAxis
         this.yAxis = option.yAxis
         this.pieAxis = option.pieAxis

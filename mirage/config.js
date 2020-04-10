@@ -407,6 +407,7 @@ export default function () {
 					}
 
 				},
+				/**
 				{
 					id: "stack-test-2020-03-19",
 					type: "charts",
@@ -460,6 +461,7 @@ export default function () {
 						}
 					}
 				},
+				*/
 				{
 					id: "scatter-test-2020-03-19",
 					type: "charts",
@@ -541,7 +543,7 @@ export default function () {
 							"first Commont", "Second Commont"
 						],
 						dimension: ['area', 'SALES_QTY', 'SALES_VALUES', 'sales'],
-						dimensions: ['PROVINCE','CITY'],
+						dimensions: ['PROVINCE', 'CITY'],
 						grid: {
 							width: "auto",
 							height: "auto",
@@ -588,19 +590,13 @@ export default function () {
 					id: "stack-test-2020-04-09",
 					type: "charts",
 					attributes: {
-						title: "某市场产品对比",
+						title: "| 市场规模与产品销量发展情况",
 						type: "stack",
-						dataset: [
-							{ YEAR: new Date(2015, 0, 1), apples: 3840, bananas: 1920, cherries: 960, oranges: 400 },
-							{ YEAR: new Date(2015, 1, 1), apples: 1600, bananas: 1440, cherries: 960, oranges: 400 },
-							{ YEAR: new Date(2015, 2, 1), apples: 640, bananas: 960, cherries: 640, oranges: 400 },
-							{ YEAR: new Date(2015, 3, 1), apples: 320, bananas: 480, cherries: 640, oranges: 400 }
-						],
 						commonts: [
 							"first Commont", "Second Commont"
 						],
 						dimension: ['month', 'apples', 'bananas', 'cherries', 'oranges'],
-						dimensions: ['YEAR','QUARTER','MONTH'],
+						dimensions: ['YEAR', 'QUARTER', 'MONTH'],
 						grid: {
 							width: "auto",
 							height: "auto",
@@ -630,7 +626,325 @@ export default function () {
 							className: 'x-axis',
 							position: 'bottom',
 							offset: 0,
-							type: 'time',
+							type: 'category',
+							min: 0,
+							max: 0,
+							data: [],
+							dimension: "YEAR"
+						}
+					}
+				},
+				{
+					id: "stack-test-2020-04-10-mulit",
+					type: "charts",
+					attributes: {
+						title: "| 市场内各分子份额变化",
+						type: "stack",
+						commonts: [
+							"first Commont", "Second Commont"
+						],
+						dimension: ['month', 'apples', 'bananas', 'cherries', 'oranges'],
+						dimensions: ['YEAR', 'QUARTER', 'MONTH'],
+						grid: {
+							width: "auto",
+							height: "auto",
+							padding: {
+								top: 24,
+								right: 24,
+								bottom: 24,
+								left: 24
+							},
+							bgColor: 'transparent'
+						},
+						colorPool: ["#E7F0FE", "#B8D4FA", "#8ABCF4", "#5CA6EF",
+							"#3492E5",
+							"#1E7EC8",
+							"#18669A"],
+						yAxis: {
+							className: 'y-axis',
+							position: 'left',
+							offset: 0,
+							type: 'value',
+							min: 0,
+							max: 0,
+							data: [], // category 必须
+							dimension: ['apples', 'bananas', 'cherries', 'oranges']
+						},
+						xAxis: {
+							className: 'x-axis',
+							position: 'bottom',
+							offset: 0,
+							type: 'category',
+							min: 0,
+							max: 0,
+							data: [],
+							dimension: "YEAR"
+						}
+					}
+				},
+				{
+					id: "lines-test-2020-04-10",
+					type: "charts",
+					attributes: {
+						title: " | 市场与产品发展趋势",
+						type: "line",
+						dataset: [[
+							{
+								phase: '2018Q1',
+								sales: 2263262.25,
+								quote: 2584466.75,
+								rate: "0.8757",
+								product: "all"
+							},
+							{
+								phase: '2018Q2',
+								sales: 2194822.96875,
+								quote: 2643496,
+								rate: "0.8303",
+								product: "all"
+							},
+							{
+								phase: '2018Q3',
+								sales: 2359731.25,
+								quote: 2770609.75,
+								rate: "0.8517",
+								product: "all"
+							},
+							{
+								phase: '2018Q4',
+								sales: 2165844.0625,
+								quote: 2914783.4375,
+								rate: "0.7431",
+								product: "all"
+							},
+							{
+								phase: '2019Q1',
+								sales: 704715.671875,
+								quote: 2274136,
+								rate: "0.3099",
+								product: "all"
+							},
+							{
+								phase: '2019Q2',
+								sales: 677539.40625,
+								quote: 2806879,
+								rate: "0.2414",
+								product: "all"
+							},
+							{
+								phase: '2019Q3',
+								sales: 679346.203125,
+								quote: 2975934,
+								rate: "0.2283",
+								product: "all"
+							}]
+						],
+						commonts: [
+							"first Commont", "Second Commont"
+						],
+						dimension: ['phase', 'sales', 'quote', 'rate', 'product'],
+						dimensions: ["YEAR", "QUARTER", "MONTH"],
+						grid: {
+							width: "auto",
+							height: "auto",
+							padding: {
+								top: 8,
+								right: 8,
+								bottom: 8,
+								left: 8
+							},
+							bgColor: 'transparent'
+						},
+						colorPool: ["#E7F0FE", "#B8D4FA", "#8ABCF4", "#5CA6EF",
+						"#3492E5",
+						"#1E7EC8",
+						"#18669A"],
+						yAxis: {
+							className: 'y-axis',
+							position: 'left',
+							offset: 0,
+							type: 'value',
+							min: 0,
+							max: 0,
+							data: [], // category 必须
+							dimension: "SALES_VALUE",
+							ticks: 8,
+							formatter: '.2s'
+						},
+						xAxis: {
+							className: 'x-axis',
+							position: 'bottom',
+							offset: 0,
+							type: 'category',
+							min: 0,
+							max: 0,
+							data: [],
+							dimension: "YEAR"
+						}
+					}
+				},
+				{
+					id: "lines-test-2020-04-10-import-product",
+					type: "charts",
+					attributes: {
+						title: "| 所在市场内重点产品份额变化",
+						type: "line",
+						dataset: [[
+							{
+								phase: '2018Q1',
+								sales: 2263262.25,
+								quote: 2584466.75,
+								rate: "0.8757",
+								product: "all"
+							},
+							{
+								phase: '2018Q2',
+								sales: 2194822.96875,
+								quote: 2643496,
+								rate: "0.8303",
+								product: "all"
+							},
+							{
+								phase: '2018Q3',
+								sales: 2359731.25,
+								quote: 2770609.75,
+								rate: "0.8517",
+								product: "all"
+							},
+							{
+								phase: '2018Q4',
+								sales: 2165844.0625,
+								quote: 2914783.4375,
+								rate: "0.7431",
+								product: "all"
+							},
+							{
+								phase: '2019Q1',
+								sales: 704715.671875,
+								quote: 2274136,
+								rate: "0.3099",
+								product: "all"
+							},
+							{
+								phase: '2019Q2',
+								sales: 677539.40625,
+								quote: 2806879,
+								rate: "0.2414",
+								product: "all"
+							},
+							{
+								phase: '2019Q3',
+								sales: 679346.203125,
+								quote: 2975934,
+								rate: "0.2283",
+								product: "all"
+							}]
+						],
+						commonts: [
+							"first Commont", "Second Commont"
+						],
+						dimension: ['phase', 'sales', 'quote', 'rate', 'product'],
+						dimensions: ["YEAR", "QUARTER", "MONTH"],
+						grid: {
+							width: "auto",
+							height: "auto",
+							padding: {
+								top: 8,
+								right: 8,
+								bottom: 8,
+								left: 8
+							},
+							bgColor: 'transparent'
+						},
+						colorPool: [
+							"#5CA6EF",
+							"#C3DD41",
+							"#7C67E4",
+							"#F3A250",
+							"#48CFEA",
+							"#44E494",
+							"#E9638F",
+							"#F7D735",
+							"#A660EC",
+							"#4ADDC5",
+							"#3492E5",
+							"#ADC229",
+							"#5642D7",
+							"#ED8B40",
+							"#1DC7E2",
+							"#25D075",
+							"#DD3C77",
+							"#F1C227",
+							"#8737E1",
+							"#31C4A9",
+							"#1E7EC8",
+							"#899523",
+							"#3A2CBA",
+							"#E87430",
+							"#1BA2B1",
+							"#20A258",
+							"#C02663",
+							"#ECAD18",
+							"#6821C4",
+							"#2E9480",
+							"#18669A",
+							"#656B1A",
+							"#2A2390",
+							"#E55B1F",
+							"#157D84",
+							"#18773E",
+							"#941E51",
+							"#DD9313",
+							"#4D1B98",
+							"#256A5B",
+							"#E7F0FE",
+							"#E8F8BF",
+							"#EEE8FC",
+							"#FEF1DC",
+							"#CEF0FD",
+							"#C7FAE6",
+							"#FDE8EC",
+							"#FFFBC7",
+							"#F4E7FD",
+							"#CAF6F1",
+							"#B8D4FA",
+							"#DAEF95",
+							"#CABCF5",
+							"#FCD9AC",
+							"#A0E3F8",
+							"#9BF3CD",
+							"#F7BBC9",
+							"#FDF396",
+							"#DDB9F8",
+							"#9FEFE4",
+							"#8ABCF4",
+							"#CDE66B",
+							"#A492ED",
+							"#F7BE7D",
+							"#73D9F2",
+							"#6FEBB2",
+							"#F08FAC",
+							"#FAE666",
+							"#C38CF2",
+							"#74E7D5"
+						],
+						yAxis: {
+							className: 'y-axis',
+							position: 'left',
+							offset: 0,
+							type: 'value',
+							min: 0,
+							max: 0,
+							data: [], // category 必须
+							dimension: "SALES_VALUE",
+							ticks: 8,
+							formatter: '.2s'
+						},
+						xAxis: {
+							className: 'x-axis',
+							position: 'bottom',
+							offset: 0,
+							type: 'category',
 							min: 0,
 							max: 0,
 							data: [],

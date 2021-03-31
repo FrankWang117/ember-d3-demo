@@ -7012,6 +7012,11 @@ isurl@^1.0.0-alpha5:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
 
+javascript-state-machine@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/javascript-state-machine/-/javascript-state-machine-3.1.0.tgz#06eeb2136a6a19ae1b56105c25caec283dd5cd14"
+  integrity sha512-BwhYxQ1OPenBPXC735RgfB+ZUG8H3kjsx8hrYTgWnoy6TPipEy4fiicyhT2lxRKAXq9pG7CfFT8a2HLr6Hmwxg==
+
 jquery@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
@@ -10469,8 +10474,9 @@ xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1:
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
 
 y18n@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.0.tgz#95ef94f85ecc81d007c264e190a120f0a3c8566b"
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.1.tgz#8db2b83c31c5d75099bb890b23f3094891e247d4"
+  integrity sha512-wNcy4NvjMYL8gogWWYAO7ZFWFfHcbdbE57tZO8e4cbpj8tfUcwrwqSl3ad8HxpYWCdXcJUCeKKZS62Av1affwQ==
 
 yallist@^3.0.0, yallist@^3.0.2:
   version "3.1.1"
